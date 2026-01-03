@@ -6,153 +6,309 @@
     <title>Sistem Administrasi Surat - MTs Negeri 1 Lamongan</title>
     <style>
       :root {
-        --primary-color: #2e7d32;
-        --secondary-color: #1b5e20;
-        --bg-color: #f0f2f5;
-        --white: #ffffff;
-        --border-color: #ddd;
-        --text-color: #333;
-        --danger-color: #d32f2f;
+        /* COLOR PALETTE */
+        --primary-color: #059669;
+        --primary-dark: #047857;
+        --primary-light: #d1fae5;
+        --accent-color: #f59e0b;
+
+        --bg-body: #f3f4f6;
+        --bg-card: #ffffff;
+        --bg-input: #f9fafb;
+
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --text-light: #9ca3af;
+
+        --border-color: #e5e7eb;
+        --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        --shadow-glow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+
+        --radius: 12px;
+        --radius-sm: 8px;
       }
+
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      }
-      body {
-        background-color: var(--bg-color);
-        color: var(--text-color);
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
       }
 
+      body {
+        background-color: var(--bg-body);
+        color: var(--text-main);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* UTILITIES */
       .hidden {
         display: none !important;
       }
-      .loading {
+      .flex {
+        display: flex;
+      }
+      .flex-col {
+        flex-direction: column;
+      }
+      .items-center {
+        align-items: center;
+      }
+      .justify-between {
+        justify-content: space-between;
+      }
+      .gap-2 {
+        gap: 0.5rem;
+      }
+      .gap-4 {
+        gap: 1rem;
+      }
+      .w-full {
+        width: 100%;
+      }
+      .mt-4 {
+        margin-top: 1.5rem;
+      }
+      .mb-4 {
+        margin-bottom: 1.5rem;
+      }
+      .text-center {
         text-align: center;
-        padding: 20px;
-        color: #666;
-        font-style: italic;
       }
 
-      /* LOGIN */
+      /* LOADING SPINNER */
+      .loading-overlay {
+        position: absolute;
+        inset: 0;
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(2px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10;
+        border-radius: var(--radius);
+      }
+      .spinner {
+        width: 30px;
+        height: 30px;
+        border: 3px solid var(--bg-input);
+        border-top-color: var(--primary-color);
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      /* --- LOGIN PAGE --- */
       #login-page {
-        height: 100vh;
+        min-height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: linear-gradient(
-          135deg,
-          var(--primary-color),
-          var(--secondary-color)
-        );
+        background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+        padding: 20px;
+        position: relative;
       }
       .login-card {
-        background: var(--white);
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
         padding: 2.5rem;
-        border-radius: 8px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        border-radius: 16px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         width: 100%;
-        max-width: 380px;
+        max-width: 400px;
+        z-index: 10;
       }
-      .login-card h2 {
-        text-align: center;
-        color: var(--primary-color);
-        margin-bottom: 1.5rem;
+      .login-header h2 {
+        color: var(--primary-dark);
+        font-weight: 800;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
       }
+
+      /* --- FORM ELEMENTS --- */
       .form-group {
-        margin-bottom: 1rem;
-        text-align: left;
+        margin-bottom: 1.25rem;
       }
       .form-group label {
         display: block;
-        margin-bottom: 0.4rem;
-        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
         font-weight: 600;
+        color: var(--text-main);
+        font-size: 0.9rem;
       }
       .form-control {
         width: 100%;
-        padding: 10px;
+        padding: 0.75rem 1rem;
         border: 1px solid var(--border-color);
-        border-radius: 4px;
+        border-radius: var(--radius-sm);
         font-size: 0.95rem;
+        background-color: var(--bg-input);
+        transition: all 0.2s ease;
+        color: var(--text-main);
       }
+      .form-control:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        background-color: #fff;
+        box-shadow: var(--shadow-glow);
+      }
+      textarea.form-control {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      /* --- BUTTONS --- */
       .btn {
         background-color: var(--primary-color);
         color: white;
-        padding: 10px 20px;
+        padding: 0.75rem 1.5rem;
         border: none;
-        border-radius: 4px;
+        border-radius: var(--radius-sm);
         cursor: pointer;
-        font-size: 1rem;
+        font-size: 0.95rem;
+        font-weight: 600;
         width: 100%;
-        font-weight: 500;
-        transition: background 0.3s;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
       }
       .btn:hover {
-        background-color: var(--secondary-color);
+        background-color: var(--primary-dark);
+        transform: translateY(-1px);
+        box-shadow: var(--shadow-md);
+      }
+      .btn:active {
+        transform: translateY(0);
+      }
+      .btn:disabled {
+        background-color: #d1d5db;
+        cursor: not-allowed;
+        transform: none;
+      }
+      .btn-sm {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+        width: auto;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 1px solid var(--primary-color);
+        color: var(--primary-color);
+      }
+      .btn-outline:hover {
+        background: var(--primary-color);
+        color: white;
+      }
+      .btn-danger {
+        background-color: #ef4444;
+        color: white;
+      }
+      .btn-danger:hover {
+        background-color: #b91c1c;
+      }
+      .btn-warning {
+        background-color: #f59e0b;
+        color: white;
+      }
+      .btn-warning:hover {
+        background-color: #d97706;
+      }
+      .btn-info {
+        background-color: #3b82f6;
+        color: white;
+      }
+      .btn-info:hover {
+        background-color: #2563eb;
       }
 
-      /* MAIN APP */
+      /* --- MAIN LAYOUT --- */
       #main-app {
         display: none;
         min-height: 100vh;
       }
       header {
-        background-color: var(--primary-color);
-        color: white;
-        padding: 0.8rem 2rem;
+        background-color: var(--bg-card);
+        color: var(--text-main);
+        padding: 1rem 2rem;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid var(--border-color);
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
       .brand h3 {
-        font-size: 1.2rem;
-        font-weight: 600;
+        font-size: 1.25rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        display: flex;
+        align-items: center;
+        gap: 10px;
       }
       .user-info {
         display: flex;
         align-items: center;
-        gap: 15px;
+        gap: 10px;
       }
       .badge {
-        background: rgba(255, 255, 255, 0.2);
-        padding: 4px 10px;
-        border-radius: 12px;
-        font-size: 0.85rem;
-      }
-      .btn-logout {
-        background: #d32f2f;
-        padding: 6px 15px;
-        font-size: 0.85rem;
-        width: auto;
+        background: var(--primary-light);
+        color: var(--primary-dark);
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
-      /* NAV */
+      /* NAVIGATION TABS */
       .navbar {
-        background: white;
+        background: var(--bg-card);
         padding: 0 2rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         gap: 2rem;
+        overflow-x: auto;
       }
       .nav-item {
-        padding: 1rem 0;
+        padding: 1rem 0.5rem;
         cursor: pointer;
-        color: #666;
-        font-weight: 500;
-        border-bottom: 3px solid transparent;
+        color: var(--text-muted);
+        font-weight: 600;
+        position: relative;
+        transition: color 0.2s;
+        font-size: 0.95rem;
       }
       .nav-item:hover {
         color: var(--primary-color);
       }
       .nav-item.active {
         color: var(--primary-color);
-        border-bottom: 3px solid var(--primary-color);
+      }
+      .nav-item.active::after {
+        content: "";
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        width: 100%;
+        height: 3px;
+        background-color: var(--primary-color);
+        border-radius: 3px 3px 0 0;
       }
 
-      /* CONTENT */
+      /* CONTENT AREA */
       .content {
         padding: 2rem;
         max-width: 1400px;
@@ -165,178 +321,342 @@
       .page-section.active {
         display: block;
       }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(5px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-      /* LAYOUT */
+      /* DASHBOARD CARDS */
+      .welcome-card {
+        background: linear-gradient(to right, #ffffff, #f9fafb);
+        padding: 2rem;
+        border-radius: var(--radius);
+        border-left: 5px solid var(--primary-color);
+        box-shadow: var(--shadow-sm);
+        margin-bottom: 2rem;
+      }
+      .stat-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 1.5rem;
+      }
+      .stat-card {
+        background: white;
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-sm);
+        border: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        transition: transform 0.2s;
+      }
+      .stat-card:hover {
+        transform: translateY(-3px);
+      }
+      .stat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+      }
+      .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--text-main);
+        line-height: 1;
+      }
+      .stat-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+      }
+      .stat-sm {
+        border-left: 4px solid #3b82f6;
+      }
+      .stat-sm .stat-icon {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+      .stat-sk {
+        border-left: 4px solid #10b981;
+      }
+      .stat-sk .stat-icon {
+        background: #d1fae5;
+        color: #065f46;
+      }
+      .stat-pending {
+        border-left: 4px solid #f59e0b;
+      }
+      .stat-pending .stat-icon {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .stat-done {
+        border-left: 4px solid #8b5cf6;
+      }
+      .stat-done .stat-icon {
+        background: #ede9fe;
+        color: #5b21b6;
+      }
+
+      /* SPLIT LAYOUT */
       .sm-container {
         display: flex;
-        gap: 20px;
+        gap: 24px;
         align-items: flex-start;
       }
       .sm-form-col {
-        flex: 0 0 35%;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        flex: 0 0 380px;
+        background: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
         position: sticky;
-        top: 20px;
+        top: 100px;
+        border: 1px solid var(--border-color);
       }
       .sm-table-col {
         flex: 1;
-        background: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        background: var(--bg-card);
+        padding: 1.5rem;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-md);
+        border: 1px solid var(--border-color);
         overflow-x: auto;
+        min-width: 0;
+      }
+      .section-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: var(--primary-dark);
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--bg-body);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
       }
 
-      /* FILTER */
+      /* TABLES */
       .filter-bar {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 15px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #eee;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 10px;
       }
-      .filter-select {
-        padding: 8px;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        font-size: 0.9rem;
-      }
-
-      .section-header {
-        margin-bottom: 15px;
-        font-size: 1.1rem;
-        color: var(--primary-color);
-        font-weight: bold;
-        border-bottom: 2px solid #eee;
-        padding-bottom: 10px;
-      }
-
       table {
         width: 100%;
-        border-collapse: collapse;
+        border-collapse: separate;
+        border-spacing: 0;
         font-size: 0.9rem;
       }
       th {
-        background-color: #f8f9fa;
-        color: var(--secondary-color);
+        background-color: #f8fafc;
+        color: var(--text-muted);
         font-weight: 600;
         text-align: left;
-        padding: 12px;
-        border-bottom: 2px solid #eee;
+        padding: 12px 16px;
+        border-bottom: 2px solid var(--border-color);
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        letter-spacing: 0.5px;
+      }
+      th:first-child {
+        border-top-left-radius: var(--radius-sm);
+      }
+      th:last-child {
+        border-top-right-radius: var(--radius-sm);
       }
       td {
-        padding: 12px;
-        border-bottom: 1px solid #eee;
-        color: #444;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border-color);
+        color: var(--text-main);
         vertical-align: middle;
       }
-      tr:hover {
-        background-color: #f1f8e9;
+      tr:hover td {
+        background-color: #f9fafb;
+      }
+      tr:last-child td:first-child {
+        border-bottom-left-radius: var(--radius-sm);
+      }
+      tr:last-child td:last-child {
+        border-bottom-right-radius: var(--radius-sm);
       }
 
-      /* BADGE STATUS */
+      /* STATUS BADGES */
       .status-badge {
-        padding: 4px 8px;
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: bold;
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
       .status-baru {
-        background-color: #e3f2fd;
-        color: #1565c0;
+        background-color: #dbeafe;
+        color: #1e40af;
       }
       .status-proses {
-        background-color: #fff3e0;
-        color: #ef6c00;
+        background-color: #fef3c7;
+        color: #92400e;
       }
       .status-selesai {
-        background-color: #e8f5e9;
-        color: #2e7d32;
+        background-color: #d1fae5;
+        color: #065f46;
       }
 
-      /* ACTION BUTTONS */
-      .btn-action {
-        padding: 4px 8px;
-        border-radius: 4px;
-        border: none;
-        cursor: pointer;
-        font-size: 0.8rem;
-        color: white;
-        margin-right: 5px;
-      }
-      .btn-preview {
-        background-color: #1976d2;
-      }
-      .btn-delete {
-        background-color: var(--danger-color);
-      }
-      .btn-delete:hover {
-        background-color: #b71c1c;
-      }
-
-      /* PDF MODAL (POPUP) */
-      .pdf-modal {
+      /* MODALS */
+      .modal-backdrop {
         display: none;
         position: fixed;
         z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.6);
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
         align-items: center;
         justify-content: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .modal-backdrop.show {
+        display: flex;
+        opacity: 1;
       }
       .modal-content {
-        background-color: white;
+        background-color: var(--bg-card);
         width: 90%;
-        height: 90%;
+        max-width: 900px;
         display: flex;
         flex-direction: column;
-        border-radius: 8px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow-lg);
         overflow: hidden;
+        max-height: 90vh;
+        transform: scale(0.95);
+        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      #pdfModal .modal-content {
+        width: 95vw;
+        height: 90vh;
+        max-width: none;
+        max-height: none;
+      }
+      .modal-backdrop.show .modal-content {
+        transform: scale(1);
       }
       .modal-header {
-        padding: 15px 20px;
-        background: #f1f1f1;
+        padding: 1.25rem 1.5rem;
+        background: #f9fafb;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        border-bottom: 1px solid #ddd;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .modal-header h3 {
+        font-size: 1.1rem;
+        color: var(--text-main);
+        font-weight: 700;
       }
       .modal-body {
         flex: 1;
-        background: #eee;
+        padding: 0;
         position: relative;
+        background: #e5e7eb;
+        overflow: hidden;
       }
       .modal-body iframe {
         width: 100%;
         height: 100%;
         border: none;
       }
-
-      .close-modal {
-        font-size: 28px;
-        font-weight: bold;
+      .modal-body.form-padding {
+        padding: 1.5rem;
+        overflow-y: auto;
+        background: white;
+      }
+      .close-btn {
+        font-size: 24px;
+        line-height: 1;
         cursor: pointer;
-        color: #333;
+        color: var(--text-light);
+        transition: color 0.2s;
+        border: none;
+        background: none;
+        padding: 0 5px;
       }
-      .download-link {
-        color: white;
-        text-decoration: none;
-        background: var(--primary-color);
-        padding: 8px 15px;
-        border-radius: 4px;
-        font-size: 0.9rem;
-      }
-      .download-link:hover {
-        background: var(--secondary-color);
+      .close-btn:hover {
+        color: #ef4444;
       }
 
+      /* TOAST NOTIFICATION */
+      #toast-container {
+        position: fixed;
+        top: 24px;
+        right: 24px;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+      .toast {
+        background: var(--bg-card);
+        color: var(--text-main);
+        padding: 12px 20px;
+        border-radius: var(--radius-sm);
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        border-left: 4px solid var(--primary-color);
+        animation: slideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        min-width: 280px;
+        font-weight: 500;
+      }
+      .toast.error {
+        border-left-color: #ef4444;
+      }
+      .toast.success {
+        border-left-color: #10b981;
+      }
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateX(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      @keyframes fadeOut {
+        to {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+      }
+
+      /* RESPONSIVE */
       @media (max-width: 992px) {
         .sm-container {
           flex-direction: column;
@@ -345,44 +665,72 @@
           flex: 1;
           width: 100%;
           position: static;
+          margin-bottom: 20px;
+        }
+        .navbar {
+          padding: 0 1rem;
         }
       }
     </style>
   </head>
   <body>
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container"></div>
+
     <!-- LOGIN PAGE -->
     <div id="login-page">
       <div class="login-card">
-        <h2>Login Staff</h2>
-        <div class="form-group">
-          <label>Username</label>
-          <input
-            type="text"
-            id="username"
-            class="form-control"
-            placeholder="admin"
-          />
+        <div class="login-header text-center">
+          <h2>Admin Login</h2>
+          <p style="color: #666; font-weight: 400">Sistem Administrasi Surat</p>
         </div>
-        <div class="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            id="password"
-            class="form-control"
-            placeholder="admin"
-          />
-        </div>
-        <button class="btn" onclick="login()">Masuk Sistem</button>
+        <form onsubmit="login(event)">
+          <div class="form-group">
+            <label>Username</label>
+            <input
+              type="text"
+              id="username"
+              class="form-control"
+              placeholder="Masukkan username"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              id="password"
+              class="form-control"
+              placeholder="Masukkan password"
+              required
+            />
+          </div>
+          <button type="submit" class="btn" id="btn-login">
+            <span>Masuk Sistem</span>
+          </button>
+        </form>
       </div>
     </div>
 
     <!-- MAIN APP -->
     <div id="main-app">
       <header>
-        <div class="brand"><h3>MTs Negeri 1 Lamongan</h3></div>
+        <div class="brand">
+          <h3>📂 MTs Negeri 1 Lamongan</h3>
+        </div>
         <div class="user-info">
-          <span class="badge">Role: Staff</span>
-          <button class="btn btn-logout" onclick="logout()">Logout</button>
+          <span id="user-role-badge" class="badge">Role</span>
+          <!-- Tombol Refresh -->
+          <button
+            class="btn btn-sm btn-outline"
+            onclick="refreshAllData()"
+            title="Perbarui Data"
+          >
+            🔄 Refresh
+          </button>
+          <button class="btn btn-danger btn-sm" onclick="logout()">
+            Logout
+          </button>
         </div>
       </header>
 
@@ -390,13 +738,25 @@
         <div class="nav-item active" onclick="switchTab('dashboard', this)">
           Dashboard
         </div>
-        <div class="nav-item" onclick="switchTab('surat-masuk', this)">
+        <div
+          class="nav-item"
+          id="nav-sm"
+          onclick="switchTab('surat-masuk', this)"
+        >
           Surat Masuk
         </div>
-        <div class="nav-item" onclick="switchTab('surat-keluar', this)">
+        <div
+          class="nav-item"
+          id="nav-sk"
+          onclick="switchTab('surat-keluar', this)"
+        >
           Surat Keluar
         </div>
-        <div class="nav-item" onclick="switchTab('disposisi', this)">
+        <div
+          class="nav-item"
+          id="nav-disp"
+          onclick="switchTab('disposisi', this)"
+        >
           Disposisi
         </div>
       </nav>
@@ -404,40 +764,63 @@
       <div class="content">
         <!-- DASHBOARD -->
         <div id="dashboard" class="page-section active">
-          <div
-            style="
-              background: white;
-              padding: 20px;
-              border-radius: 8px;
-              border-left: 5px solid #ffa000;
-              margin-bottom: 20px;
-            "
-          >
-            <h3>Selamat Datang!</h3>
-            <p>Sistem dengan Fitur Hapus & Preview PDF.</p>
+          <div class="welcome-card">
+            <h3 id="welcome-msg">Selamat Datang!</h3>
+            <p class="mb-4" style="color: var(--text-muted)">
+              Ringkasan aktivitas surat hari ini.
+            </p>
+          </div>
+          <div class="stat-grid">
+            <div class="stat-card stat-sm">
+              <div class="stat-header">
+                <div class="stat-label">Total Surat Masuk</div>
+                <div class="stat-icon">📥</div>
+              </div>
+              <div class="stat-value" id="count-sm">0</div>
+            </div>
+            <div class="stat-card stat-sk">
+              <div class="stat-header">
+                <div class="stat-label">Total Surat Keluar</div>
+                <div class="stat-icon">📤</div>
+              </div>
+              <div class="stat-value" id="count-sk">0</div>
+            </div>
+            <div class="stat-card stat-pending">
+              <div class="stat-header">
+                <div class="stat-label">Menunggu Disposisi</div>
+                <div class="stat-icon">⏳</div>
+              </div>
+              <div class="stat-value" id="count-pending">0</div>
+            </div>
+            <div class="stat-card stat-done">
+              <div class="stat-header">
+                <div class="stat-label">Sudah Disposisi</div>
+                <div class="stat-icon">✅</div>
+              </div>
+              <div class="stat-value" id="count-done">0</div>
+            </div>
           </div>
         </div>
 
         <!-- SURAT MASUK -->
         <div id="surat-masuk" class="page-section">
           <div class="sm-container">
-            <!-- FORM KIRI -->
             <div class="sm-form-col">
-              <div class="section-header">Tambah Surat Masuk</div>
+              <div class="section-title">Tambah Surat Masuk</div>
               <form id="form-sm" onsubmit="submitSuratMasuk(event)">
                 <div class="form-group">
-                  <label>No. Agenda</label>
-                  <input
+                  <label>No. Agenda</label
+                  ><input
                     type="text"
                     id="sm_agenda"
                     class="form-control"
                     required
-                    placeholder="Contoh: 002/SK/MTs/2026"
+                    placeholder="001/SM/2026"
                   />
                 </div>
                 <div class="form-group">
-                  <label>No. Surat</label>
-                  <input
+                  <label>No. Surat</label
+                  ><input
                     type="text"
                     id="sm_surat"
                     class="form-control"
@@ -445,8 +828,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Tanggal Surat</label>
-                  <input
+                  <label>Tanggal Surat</label
+                  ><input
                     type="date"
                     id="sm_tgl_surat"
                     class="form-control"
@@ -454,8 +837,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Tanggal Terima</label>
-                  <input
+                  <label>Tanggal Terima</label
+                  ><input
                     type="date"
                     id="sm_tgl_terima"
                     class="form-control"
@@ -463,8 +846,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Pengirim</label>
-                  <input
+                  <label>Pengirim</label
+                  ><input
                     type="text"
                     id="sm_pengirim"
                     class="form-control"
@@ -472,8 +855,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Perihal</label>
-                  <input
+                  <label>Perihal</label
+                  ><input
                     type="text"
                     id="sm_perihal"
                     class="form-control"
@@ -481,8 +864,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Upload File (PDF)</label>
-                  <input
+                  <label>File PDF</label
+                  ><input
                     type="file"
                     id="sm_file"
                     class="form-control"
@@ -490,23 +873,27 @@
                     required
                   />
                 </div>
-                <button type="submit" class="btn" id="btn-save">
-                  Simpan Surat Masuk
+                <button type="submit" class="btn" id="btn-save-sm">
+                  Simpan Data
                 </button>
               </form>
             </div>
-
-            <!-- TABEL KANAN -->
             <div class="sm-table-col">
               <div class="filter-bar">
-                <div class="section-header" style="border: none; margin: 0">
+                <div
+                  class="section-title"
+                  style="margin: 0; border: none; font-size: 1rem"
+                >
                   Daftar Surat Masuk
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px">
-                  <label>Filter Bulan:</label>
+                <div class="flex items-center gap-2">
+                  <label style="color: var(--text-muted); font-size: 0.9rem"
+                    >Filter:</label
+                  >
                   <select
                     id="monthFilter"
-                    class="filter-select"
+                    class="form-control"
+                    style="width: auto; padding: 0.5rem"
                     onchange="renderTable()"
                   >
                     <option value="all">Semua Bulan</option>
@@ -525,54 +912,47 @@
                   </select>
                 </div>
               </div>
-
-              <div id="loading-msg" class="loading">
-                Memuat data Surat Masuk...
+              <div id="loading-msg-sm" class="loading-overlay hidden">
+                <div class="spinner"></div>
               </div>
-
-              <table id="data-table">
+              <table id="data-table-sm">
                 <thead>
                   <tr>
                     <th width="10%">No. Agenda</th>
                     <th width="10%">No. Surat</th>
-                    <th width="10%">Tgl Surat</th>
-                    <!-- KOLOM BARU -->
-                    <th width="10%">Tgl Terima</th>
+                    <th width="12%">Tgl Surat</th>
+                    <th width="12%">Tgl Terima</th>
                     <th width="15%">Pengirim</th>
                     <th width="15%">Perihal</th>
-                    <th width="8%">Status</th>
-                    <th width="25%">Aksi</th>
+                    <th width="10%">Status</th>
+                    <th width="15%">Aksi</th>
                   </tr>
                 </thead>
-                <tbody id="tbody-sm">
-                  <!-- Data -->
-                </tbody>
+                <tbody id="tbody-sm"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- PLACEHOLDER -->
         <!-- SURAT KELUAR -->
         <div id="surat-keluar" class="page-section">
           <div class="sm-container">
-            <!-- FORM KIRI -->
             <div class="sm-form-col">
-              <div class="section-header">Tambah Surat Keluar</div>
+              <div class="section-title">Tambah Surat Keluar</div>
               <form id="form-sk" onsubmit="submitSuratKeluar(event)">
                 <div class="form-group">
-                  <label>No. Agenda</label>
-                  <input
+                  <label>No. Agenda</label
+                  ><input
                     type="text"
                     id="sk_agenda"
                     class="form-control"
                     required
-                    placeholder="Contoh: 001/SK/MTs/2026"
+                    placeholder="001/SK/2026"
                   />
                 </div>
                 <div class="form-group">
-                  <label>No. Surat</label>
-                  <input
+                  <label>No. Surat</label
+                  ><input
                     type="text"
                     id="sk_surat"
                     class="form-control"
@@ -580,9 +960,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Tanggal Surat</label>
-                  <!-- Date input standar -->
-                  <input
+                  <label>Tanggal Surat</label
+                  ><input
                     type="date"
                     id="sk_tanggal"
                     class="form-control"
@@ -590,8 +969,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Tujuan</label>
-                  <input
+                  <label>Tujuan</label
+                  ><input
                     type="text"
                     id="sk_tujuan"
                     class="form-control"
@@ -600,8 +979,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Perihal</label>
-                  <input
+                  <label>Perihal</label
+                  ><input
                     type="text"
                     id="sk_perihal"
                     class="form-control"
@@ -609,8 +988,8 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label>Upload File (PDF)</label>
-                  <input
+                  <label>File PDF</label
+                  ><input
                     type="file"
                     id="sk_file"
                     class="form-control"
@@ -619,22 +998,26 @@
                   />
                 </div>
                 <button type="submit" class="btn" id="btn-save-sk">
-                  Simpan Surat Keluar
+                  Simpan Data
                 </button>
               </form>
             </div>
-
-            <!-- TABEL KANAN -->
             <div class="sm-table-col">
               <div class="filter-bar">
-                <div class="section-header" style="border: none; margin: 0">
+                <div
+                  class="section-title"
+                  style="margin: 0; border: none; font-size: 1rem"
+                >
                   Daftar Surat Keluar
                 </div>
-                <div style="display: flex; align-items: center; gap: 10px">
-                  <label>Filter Bulan:</label>
+                <div class="flex items-center gap-2">
+                  <label style="color: var(--text-muted); font-size: 0.9rem"
+                    >Filter:</label
+                  >
                   <select
                     id="monthFilterKeluar"
-                    class="filter-select"
+                    class="form-control"
+                    style="width: auto; padding: 0.5rem"
                     onchange="renderTableKeluar()"
                   >
                     <option value="all">Semua Bulan</option>
@@ -653,12 +1036,10 @@
                   </select>
                 </div>
               </div>
-
-              <div id="loading-msg-sk" class="loading">
-                Memuat data Surat Keluar...
+              <div id="loading-msg-sk" class="loading-overlay hidden">
+                <div class="spinner"></div>
               </div>
-
-              <table id="data-table-keluar">
+              <table id="data-table-sk">
                 <thead>
                   <tr>
                     <th width="10%">No. Agenda</th>
@@ -666,35 +1047,27 @@
                     <th width="12%">Tanggal</th>
                     <th width="15%">Tujuan</th>
                     <th>Perihal</th>
-                    <th width="8%">Status</th>
-                    <th width="20%">Aksi</th>
+                    <th width="10%">Status</th>
+                    <th width="15%">Aksi</th>
                   </tr>
                 </thead>
-                <tbody id="tbody-sk">
-                  <!-- Data -->
-                </tbody>
+                <tbody id="tbody-sk"></tbody>
               </table>
             </div>
           </div>
         </div>
 
-        <!-- HALAMAN DISPOSISI -->
+        <!-- DISPOSISI -->
         <div id="disposisi" class="page-section">
-          <!-- ATAS: TABEL SURAT BARU -->
           <div
-            class="sm-table-col"
-            style="margin-bottom: 2rem; border-left: 5px solid #ff9800"
+            id="section-disposisi-new"
+            class="sm-table-col mb-4"
+            style="border-left: 5px solid var(--accent-color)"
           >
-            <div class="filter-bar">
-              <div class="section-header" style="border: none; margin: 0">
-                Surat Masuk yang Diteruskan
-              </div>
+            <div class="section-title">Surat Masuk Menunggu Disposisi</div>
+            <div id="loading-msg-dp-new" class="loading-overlay hidden">
+              <div class="spinner"></div>
             </div>
-
-            <div id="loading-msg-dp" class="loading">
-              Memuat data Disposisi...
-            </div>
-
             <table id="data-table-disposisi-new">
               <thead>
                 <tr>
@@ -704,104 +1077,95 @@
                   <th width="20%">Aksi</th>
                 </tr>
               </thead>
-              <tbody id="tbody-disposisi-new">
-                <!-- Data Surat Baru -->
-              </tbody>
+              <tbody id="tbody-disposisi-new"></tbody>
             </table>
           </div>
 
-          <!-- MODAL FORM DISPOSISI (POP UP) -->
-          <div id="disposisiModal" class="pdf-modal">
+          <div id="disposisiModal" class="modal-backdrop">
             <div
               class="modal-content"
-              style="height: auto; max-height: 90%; max-width: 600px"
+              style="height: auto; max-width: 600px; max-height: 90vh"
             >
               <div class="modal-header">
                 <h3 id="modalTitleDisposisi">Form Disposisi</h3>
-                <span class="close-modal" onclick="closeDisposisiModal()"
-                  >&times;</span
-                >
+                <button class="close-btn" onclick="closeDisposisiModal()">
+                  &times;
+                </button>
               </div>
-              <div
-                class="modal-body"
-                style="padding: 20px; background: white; overflow-y: auto"
-              >
+              <div class="modal-body form-padding">
                 <form id="form-disposisi" onsubmit="submitDisposisi(event)">
-                  <input type="hidden" id="disp_fileId" />
-                  <input type="hidden" id="disp_fileUrl" />
-
+                  <input type="hidden" id="disp_fileId" /><input
+                    type="hidden"
+                    id="disp_fileUrl"
+                  />
                   <div
                     class="form-group"
                     style="
-                      background: #f5f5f5;
-                      padding: 10px;
-                      border-radius: 4px;
+                      background: #f8fafc;
+                      padding: 15px;
+                      border-radius: 8px;
+                      border: 1px solid var(--border-color);
                     "
                   >
-                    <label style="color: #666">No. Surat</label>
+                    <label style="color: var(--text-muted); font-size: 0.8rem"
+                      >No. Surat</label
+                    >
                     <input
                       type="text"
                       id="disp_nosurat"
                       class="form-control"
-                      style="background: #eee"
                       readonly
+                      style="
+                        background: #fff;
+                        margin-bottom: 10px;
+                        font-weight: 600;
+                      "
                     />
-
-                    <label style="color: #666; margin-top: 10px"
-                      >Dari (Pengirim):</label
-                    >
-                    <input
-                      type="text"
-                      id="disp_pengirim"
-                      class="form-control"
-                      style="background: #eee"
-                      readonly
-                    />
-
-                    <label style="color: #666; margin-top: 10px"
-                      >Perihal:</label
-                    >
-                    <input
-                      type="text"
-                      id="disp_perihal"
-                      class="form-control"
-                      style="background: #eee"
-                      readonly
-                    />
-
-                    <div style="margin-top: 15px; display: flex; gap: 10px">
+                    <div class="flex gap-4">
+                      <div class="w-full">
+                        <label
+                          style="color: var(--text-muted); font-size: 0.8rem"
+                          >Pengirim</label
+                        ><input
+                          type="text"
+                          id="disp_pengirim"
+                          class="form-control"
+                          readonly
+                          style="background: #fff"
+                        />
+                      </div>
+                      <div class="w-full">
+                        <label
+                          style="color: var(--text-muted); font-size: 0.8rem"
+                          >Perihal</label
+                        ><input
+                          type="text"
+                          id="disp_perihal"
+                          class="form-control"
+                          readonly
+                          style="background: #fff"
+                        />
+                      </div>
+                    </div>
+                    <div class="flex gap-2 mt-4">
                       <button
                         type="button"
                         id="disp_viewBtn"
-                        class="download-link"
-                        style="
-                          flex: 1;
-                          text-align: center;
-                          border: none;
-                          cursor: pointer;
-                        "
+                        class="btn btn-info btn-sm w-full"
                       >
-                        Lihat File PDF
+                        📄 Lihat PDF
                       </button>
                       <button
                         type="button"
                         id="disp_downloadBtn"
-                        class="download-link"
-                        style="
-                          background: #1976d2;
-                          flex: 1;
-                          text-align: center;
-                          border: none;
-                          cursor: pointer;
-                        "
+                        class="btn btn-warning btn-sm w-full"
                       >
-                        Download PDF
+                        ⬇️ Download
                       </button>
                     </div>
                   </div>
-
-                  <div class="form-group" style="margin-top: 15px">
-                    <label>Penerima Disposisi (Kepada)</label>
+                  <div class="form-group mt-4">
+                    <label>Diteruskan Kepada</label>
                     <select id="disp_penerima" class="form-control" required>
                       <option value="">-- Pilih --</option>
                       <option value="Waka Kesiswaan">Waka Kesiswaan</option>
@@ -811,51 +1175,53 @@
                       <option value="Humas">Humas</option>
                     </select>
                   </div>
-
                   <div class="form-group">
                     <label>Instruksi</label>
                     <textarea
                       id="disp_instruksi"
                       class="form-control"
-                      rows="4"
-                      placeholder="Tulis instruksi disposisi..."
+                      rows="3"
+                      placeholder="Tulis instruksi..."
                       required
                     ></textarea>
                   </div>
-
-                  <!-- TAMBAHKAN CHECKBOX DI SINI -->
-                  <div class="form-group" style="margin-top: 10px">
-                    <input
-                      type="checkbox"
-                      id="disp_dicedk"
-                      style="margin-right: 8px; transform: scale(1.2)"
-                    />
+                  <div class="form-group mt-4">
                     <label
-                      for="disp_dicedk"
+                      class="flex items-center gap-2"
                       style="
-                        display: inline;
+                        font-weight: 600;
                         cursor: pointer;
-                        font-weight: bold;
+                        display: inline-flex;
                       "
-                      >Telah Dicek Pimpinan</label
                     >
+                      <input
+                        type="checkbox"
+                        id="disp_dicedk"
+                        style="
+                          width: 18px;
+                          height: 18px;
+                          accent-color: var(--primary-color);
+                        "
+                        required
+                      />
+                      <span style="font-size: 0.9rem; color: var(--text-main)"
+                        >Wajib: Saya menyatakan surat telah dicek pimpinan</span
+                      >
+                    </label>
                   </div>
-
-                  <button type="submit" class="btn" id="btnSubmitDisp">
+                  <button type="submit" class="btn mt-4" id="btnSubmitDisp">
                     Kirim Disposisi
                   </button>
                 </form>
               </div>
             </div>
           </div>
-          <!-- BAWAH: RIWAYAT DISPOSISI -->
-          <div class="sm-table-col">
-            <div class="filter-bar">
-              <div class="section-header" style="border: none; margin: 0">
-                Riwayat Disposisi
-              </div>
-            </div>
 
+          <div class="sm-table-col">
+            <div class="section-title">Riwayat Disposisi</div>
+            <div id="loading-msg-dp-history" class="loading-overlay hidden">
+              <div class="spinner"></div>
+            </div>
             <table id="data-table-disposisi-history">
               <thead>
                 <tr>
@@ -864,66 +1230,181 @@
                   <th>Perihal</th>
                   <th width="15%">Kepada</th>
                   <th width="20%">Instruksi</th>
-                  <th width="25%">Aksi</th>
+                  <th width="15%">Aksi</th>
                 </tr>
               </thead>
-              <tbody id="tbody-disposisi-history">
-                <!-- Data Riwayat -->
-              </tbody>
+              <tbody id="tbody-disposisi-history"></tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- PDF MODAL PREVIEW -->
-    <div id="pdfModal" class="pdf-modal">
+    <!-- PREVIEW PDF MODAL -->
+    <div id="pdfModal" class="modal-backdrop">
       <div class="modal-content">
         <div class="modal-header">
           <h3 id="modalTitle">Preview Dokumen</h3>
-          <div style="display: flex; gap: 10px; align-items: center">
+          <div class="flex gap-2">
             <a
               id="modalDownloadLink"
               href="#"
-              class="download-link"
+              class="btn btn-warning btn-sm"
               target="_blank"
-              >Download PDF</a
+              >Download</a
             >
-            <span class="close-modal" onclick="closePreview()">&times;</span>
+            <button class="close-btn" onclick="closePreview()">&times;</button>
           </div>
         </div>
-        <div class="modal-body">
-          <iframe id="pdfFrame" src=""></iframe>
-        </div>
+        <div class="modal-body"><iframe id="pdfFrame" src=""></iframe></div>
       </div>
     </div>
 
     <script>
-      // URL SCRIPT ANDA
+      // --- KONFIGURASI ---
       const SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbxjY76t4CyDMxVW7F7uBupB5TBzeRFlybiUMiYhiYk3-facoRiJpru4YKk7EypZpKQo_w/exec";
-
+        "https://script.google.com/macros/s/AKfycbyYFZKOrzd9Yo1UYU5EHxcs0ytvZJwzX65RUizm64kQmSb9Ekj9M_KNj2oZx2D2WpVc-Q/exec";
       let allData = [];
       let allDataKeluar = [];
+      let currentUser = null;
 
-      function login() {
+      // --- CHECK SESSION ON LOAD ---
+      window.onload = function () {
+        const savedUser = localStorage.getItem("userData");
+        const savedTime = localStorage.getItem("loginTime");
+
+        if (savedUser && savedTime) {
+          const now = Date.now();
+          const oneHour = 60 * 60 * 1000; // 3600000 ms
+
+          if (now - savedTime < oneHour) {
+            // SESSION MASIH VALID
+            currentUser = JSON.parse(savedUser);
+            document.getElementById("login-page").classList.add("hidden");
+            document.getElementById("main-app").style.display = "block";
+
+            setupPermissions();
+            fetchAllInitialData(); // FIX ISSUE: Ambil semua data saat load awal
+            showToast(`Selamat datang kembali, ${currentUser.role}`);
+            return;
+          } else {
+            // SESSION HABIS
+            localStorage.clear();
+          }
+        }
+        // ELSE: Tampilkan halaman login (default HTML)
+      };
+
+      // --- HELPER FUNCTIONS ---
+      function formatDateID(dateString) {
+        if (!dateString) return "-";
+        const d = new Date(dateString);
+        if (isNaN(d.getTime())) return dateString;
+        const day = String(d.getDate()).padStart(2, "0");
+        const month = String(d.getMonth() + 1).padStart(2, "0");
+        const year = d.getFullYear();
+        return `${day}-${month}-${year}`;
+      }
+      function getMonthPart(dateString) {
+        if (!dateString) return "";
+        if (dateString.includes("-")) {
+          const parts = dateString.split("-");
+          if (parts.length === 3) return parts[1];
+        }
+        return "";
+      }
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast ${type}`;
+        const icon = type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️";
+        toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.animation = "fadeOut 0.3s forwards";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      // --- AUTH & NAVIGATION ---
+      function login(e) {
+        e.preventDefault();
+        const btn = document.getElementById("btn-login");
         const u = document.getElementById("username").value;
         const p = document.getElementById("password").value;
-        if (u === "admin" && p === "admin") {
-          document.getElementById("login-page").style.display = "none";
-          document.getElementById("main-app").style.display = "block";
-          fetchData();
-        } else {
-          alert("Login Gagal!");
-        }
+
+        btn.disabled = true;
+        btn.innerText = "Checking...";
+
+        // Menggunakan FormData untuk menghindari CORS
+        const formData = new FormData();
+        const payload = { action: "login", username: u, password: p };
+        formData.append("data", JSON.stringify(payload));
+
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          body: formData,
+        })
+          .then((res) => res.json())
+          .then((response) => {
+            if (response.status === "success") {
+              currentUser = response.data;
+
+              // SIMPAN SESI KE LOCAL STORAGE
+              localStorage.setItem("userData", JSON.stringify(currentUser));
+              localStorage.setItem("loginTime", Date.now());
+
+              document.getElementById("login-page").classList.add("hidden");
+              document.getElementById("main-app").style.display = "block";
+
+              setupPermissions();
+              fetchAllInitialData(); // FIX ISSUE: Ambil semua data setelah login
+              showToast(`Login Berhasil! Hai, ${currentUser.role}`);
+            } else {
+              showToast(
+                response.message || "Username atau Password salah!",
+                "error"
+              );
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            showToast("Gagal koneksi ke server.", "error");
+          })
+          .finally(() => {
+            btn.disabled = false;
+            btn.innerText = "Masuk Sistem";
+          });
       }
 
       function logout() {
+        localStorage.clear(); // Hapus sesi
         location.reload();
       }
 
+      function setupPermissions() {
+        if (!currentUser) return;
+        document.getElementById("user-role-badge").innerText = currentUser.role;
+        document.getElementById(
+          "welcome-msg"
+        ).innerText = `Selamat Datang, ${currentUser.role}!`;
+
+        if (currentUser.tingkat == 1) {
+          document.getElementById("nav-sm").style.display = "block";
+          document.getElementById("nav-sk").style.display = "block";
+          document.getElementById("nav-disp").style.display = "block";
+        } else if (currentUser.tingkat == 2) {
+          document.getElementById("nav-sm").style.display = "block";
+          document.getElementById("nav-sk").style.display = "block";
+          document.getElementById("nav-disp").style.display = "none";
+        } else if (currentUser.tingkat == 3) {
+          document.getElementById("nav-sm").style.display = "none";
+          document.getElementById("nav-sk").style.display = "none";
+          document.getElementById("nav-disp").style.display = "block";
+        }
+      }
+
       function switchTab(id, el) {
-        // 1. Ubah Tampilan Tab Aktif
         document
           .querySelectorAll(".page-section")
           .forEach((p) => p.classList.remove("active"));
@@ -933,349 +1414,292 @@
         document.getElementById(id).classList.add("active");
         el.classList.add("active");
 
-        // 2. Logika Pengambilan Data & Render
+        if (id === "dashboard") updateDashboard();
 
-        // Jika tab Surat Keluar diklik & data kosong -> Fetch
-        if (id === "surat-keluar" && allDataKeluar.length === 0) {
-          fetchDataKeluar();
+        if (id === "disposisi" && currentUser.tingkat == 2) {
+          showToast("Anda tidak memiliki akses ke menu ini.", "error");
+          switchTab("dashboard", document.querySelector(".nav-item"));
+          return;
         }
 
-        // Jika tab Disposisi diklik
+        if (id === "surat-keluar" && allDataKeluar.length === 0)
+          fetchDataKeluar();
         if (id === "disposisi") {
-          // Cek apakah data Masuk kosong, jika iya fetch dulu
-          if (allData.length === 0) {
-            fetchData().then(() => {
-              renderDisposisi();
-            });
-          } else {
-            // Jika sudah ada data, langsung render
-            renderDisposisi();
-          }
+          if (allData.length === 0) fetchData().then(() => renderDisposisi());
+          else renderDisposisi();
         }
       }
 
-      function fetchData() {
-        document.getElementById("loading-msg").style.display = "block";
+      // --- FETCH ALL INITIAL DATA (FIX FOR DASHBOARD) ---
+      function fetchAllInitialData() {
+        // Memanggil kedua fungsi fetch sekaligus, lalu update dashboard
+        Promise.all([fetchData(), fetchDataKeluar()]).then(() => {
+          updateDashboard();
+        });
+      }
 
+      // --- REFRESH BUTTON LOGIC ---
+      function refreshAllData() {
+        showToast("Memperbarui data...", "info");
+        fetchAllInitialData();
+      }
+
+      // --- DASHBOARD STATS ---
+      function updateDashboard() {
+        document.getElementById("count-sm").innerText = allData.length;
+        document.getElementById("count-sk").innerText = allDataKeluar.length; // Sekarang ini tidak akan 0 karena di-fetch saat awal
+
+        let pending = allData.filter((item) => item.status === "Baru").length;
+        let done = allData.length - pending;
+
+        document.getElementById("count-pending").innerText = pending;
+        document.getElementById("count-done").innerText = done;
+      }
+
+      // --- DATA FETCHING ---
+      function fetchData() {
+        const loader = document.getElementById("loading-msg-sm");
+        if (loader) loader.classList.remove("hidden");
         return fetch(SCRIPT_URL)
           .then((res) => res.json())
           .then((data) => {
             allData = data;
             renderTable();
-            document.getElementById("loading-msg").style.display = "none";
+            if (loader) loader.classList.add("hidden");
           })
           .catch((err) => {
             console.error(err);
-            alert("Gagal mengambil data.");
-            document.getElementById("loading-msg").style.display = "none";
+            if (loader) loader.classList.add("hidden");
+          });
+      }
+      function fetchDataKeluar() {
+        const loader = document.getElementById("loading-msg-sk");
+        if (loader) loader.classList.remove("hidden");
+        return fetch(SCRIPT_URL + "?type=keluar")
+          .then((res) => res.json())
+          .then((data) => {
+            allDataKeluar = data;
+            renderTableKeluar();
+            if (loader) loader.classList.add("hidden");
+          })
+          .catch((err) => {
+            console.error(err);
+            if (loader) loader.classList.add("hidden");
           });
       }
 
+      // --- RENDERING TABLES ---
       function renderTable() {
         const tbody = document.getElementById("tbody-sm");
         const filterMonth = document.getElementById("monthFilter").value;
         tbody.innerHTML = "";
-
-        // Helper Tanggal
-        const getMonth = (dateStr) => {
-          if (!dateStr) return "";
-          const parts = dateStr.split("-");
-          return parts.length >= 2 ? parts[1] : "";
-        };
-
-        const formatDate = (dateStr) => {
-          if (!dateStr) return "-";
-          const parts = dateStr.split("T")[0].split("-");
-          if (parts.length < 3) return dateStr;
-          return `${parts[2]}-${parts[1]}-${parts[0]}`;
-        };
-
-        // Filter
         const filteredData = allData.filter((item) => {
           if (filterMonth === "all") return true;
-          return getMonth(item.tglTerima) === filterMonth;
+          return getMonthPart(item.tglTerima) === filterMonth;
         });
-
         if (filteredData.length === 0) {
-          tbody.innerHTML =
-            '<tr><td colspan="8" style="text-align:center; padding:20px; color:#888;">Tidak ada data pada periode ini.</td></tr>';
+          tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding:2rem; color:var(--text-muted);">Tidak ada data.</td></tr>`;
           return;
         }
-
-        // Render
         filteredData.forEach((item) => {
-          const tr = document.createElement("tr");
           let statusClass = "status-baru";
           if (item.status === "Proses") statusClass = "status-proses";
           if (item.status === "Selesai") statusClass = "status-selesai";
-
-          const tglSuratDisplay = formatDate(item.tglSurat);
-          const tglTerimaDisplay = formatDate(item.tglTerima);
-          const fileLink = item.fileUrl;
-
+          const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${item.noAgenda}</td>
+            <td><strong>${item.noAgenda}</strong></td>
             <td>${item.noSurat}</td>
-            <td>${tglSuratDisplay}</td>
-            <td>${tglTerimaDisplay}</td>
+            <td>${formatDateID(item.tglSurat)}</td>
+            <td>${formatDateID(item.tglTerima)}</td>
             <td>${item.pengirim}</td>
             <td>${item.perihal}</td>
             <td><span class="status-badge ${statusClass}">${
             item.status || "Baru"
           }</span></td>
             <td>
-              <button class="btn-action btn-preview" onclick="openPreview('${fileLink}')" title="Lihat PDF">👁️</button>
-              <button class="btn-action" style="background:#FFA000;" onclick="downloadFile('${fileLink}')" title="Download PDF">⬇️</button>
-              <button class="btn-action btn-delete" onclick="deleteData('${
-                item.fileId
-              }')" title="Hapus Data">🗑️</button>
+              <div class="flex gap-2">
+                <button class="btn btn-info btn-sm" onclick="openPreview('${
+                  item.fileUrl
+                }')" title="Preview">👁️</button>
+                <button class="btn btn-warning btn-sm" onclick="downloadFile('${
+                  item.fileUrl
+                }')" title="Download">⬇️</button>
+                ${
+                  currentUser.tingkat <= 1
+                    ? `<button class="btn btn-danger btn-sm" onclick="deleteData('masuk', '${item.fileId}')" title="Hapus">🗑️</button>`
+                    : ""
+                }
+              </div>
             </td>
           `;
           tbody.appendChild(tr);
         });
       }
-
-      function downloadFile(url) {
-        const link = document.createElement("a");
-        link.href = url;
-        link.target = "_blank";
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      }
-
-      function openPreview(downloadUrl) {
-        const modal = document.getElementById("pdfModal");
-        const iframe = document.getElementById("pdfFrame");
-        const dlLink = document.getElementById("modalDownloadLink");
-
-        const viewerUrl =
-          "https://docs.google.com/viewer?embedded=true&url=" +
-          encodeURIComponent(downloadUrl);
-
-        iframe.src = viewerUrl;
-        dlLink.href = downloadUrl;
-
-        modal.style.display = "flex";
-      }
-
-      function closePreview() {
-        const modal = document.getElementById("pdfModal");
-        const iframe = document.getElementById("pdfFrame");
-        iframe.src = "";
-        modal.style.display = "none";
-      }
-
-      // --- FUNGSI HAPUS DATA (FIX UNTUK SURAT KELUAR) ---
-      function deleteData(fileId) {
-        const confirmDelete = confirm(
-          "Apakah Anda yakin ingin menghapus data dan file ini?"
-        );
-        if (!confirmDelete) return;
-
-        // Kirim request delete ke GAS
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            action: "delete",
-            fileId: fileId,
-          }),
-        })
-          .then(() => {
-            alert("Data berhasil dihapus!");
-
-            // Cek tab mana yang sedang aktif
-            const activeTabId = document.querySelector(
-              ".page-section.active"
-            ).id;
-
-            // JIKA TAB SURAT KELUAR YANG AKTIF -> REFRESH DATA KELUAR
-
-            // Refresh data utama (Surat Masuk)
-            return fetchData().then(() => {
-              if (activeTabId === "surat-keluar") {
-                fetchDataKeluar();
-              }
-              if (activeTabId === "disposisi") {
-                renderDisposisi(); // Render tabel Disposisi
-              } else {
-                // JIKA TAB SURAT MASUK/REKAP/DISPOSISI -> REFRESH DATA MASUK
-                fetchData();
-              }
-            });
-          })
-          .catch((err) => {
-            console.error(err);
-            alert("Gagal menghapus data.");
-          });
-      }
-
-      function submitSuratMasuk(e) {
-        e.preventDefault();
-        const btn = document.getElementById("btn-save");
-        const fileInput = document.getElementById("sm_file");
-        const file = fileInput.files[0];
-
-        if (!file) {
-          alert("Pilih file PDF terlebih dahulu!");
-          return;
-        }
-
-        btn.disabled = true;
-        btn.innerText = "Mengupload...";
-
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-
-        reader.onload = function () {
-          const base64Data = reader.result;
-
-          const payload = {
-            action: "create",
-            noAgenda: document.getElementById("sm_agenda").value,
-            noSurat: document.getElementById("sm_surat").value,
-            tglSurat: document.getElementById("sm_tgl_surat").value,
-            tglTerima: document.getElementById("sm_tgl_terima").value,
-            pengirim: document.getElementById("sm_pengirim").value,
-            perihal: document.getElementById("sm_perihal").value,
-            fileName: file.name,
-            mimeType: file.type,
-            fileBase64: base64Data,
-          };
-
-          fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          })
-            .then(() => {
-              alert("Data Berhasil Disimpan!");
-              document.getElementById("form-sm").reset();
-              fetchData();
-            })
-            .catch((err) => {
-              console.error(err);
-              alert("Terjadi kesalahan saat upload.");
-            })
-            .finally(() => {
-              btn.disabled = false;
-              btn.innerText = "Simpan Surat Masuk";
-            });
-        };
-      }
-
-      // --- BAGIAN SURAT KELUAR ---
-
-      function fetchDataKeluar() {
-        document.getElementById("loading-msg-sk").style.display = "block";
-
-        fetch(SCRIPT_URL + "?type=keluar")
-          .then((res) => res.json())
-          .then((data) => {
-            allDataKeluar = data;
-            renderTableKeluar();
-            document.getElementById("loading-msg-sk").style.display = "none";
-          })
-          .catch((err) => {
-            console.error(err);
-            alert("Gagal mengambil data surat keluar.");
-            document.getElementById("loading-msg-sk").style.display = "none";
-          });
-      }
-
       function renderTableKeluar() {
         const tbody = document.getElementById("tbody-sk");
         const filterMonth = document.getElementById("monthFilterKeluar").value;
         tbody.innerHTML = "";
-
-        const getMonth = (dateStr) => {
-          if (!dateStr) return "";
-          return dateStr.split("-")[1];
-        };
-
-        const formatDate = (dateStr) => {
-          if (!dateStr) return "-";
-          const parts = dateStr.split("T")[0].split("-");
-          if (parts.length < 3) return dateStr;
-          return `${parts[2]}-${parts[1]}-${parts[0]}`;
-        };
-
         const filteredData = allDataKeluar.filter((item) => {
           if (filterMonth === "all") return true;
-          return getMonth(item.tanggal) === filterMonth;
+          return getMonthPart(item.tanggal) === filterMonth;
         });
-
         if (filteredData.length === 0) {
-          tbody.innerHTML =
-            '<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">Tidak ada data surat keluar.</td></tr>';
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:2rem; color:var(--text-muted);">Tidak ada data.</td></tr>`;
           return;
         }
-
         filteredData.forEach((item) => {
-          const tr = document.createElement("tr");
           let statusClass = "status-baru";
           if (item.status === "Proses") statusClass = "status-proses";
           if (item.status === "Selesai") statusClass = "status-selesai";
-
-          const tglDisplay = formatDate(item.tanggal);
-          const fileLink = item.fileUrl;
-
+          const tr = document.createElement("tr");
           tr.innerHTML = `
-            <td>${item.noAgenda}</td>
+            <td><strong>${item.noAgenda}</strong></td>
             <td>${item.noSurat}</td>
-            <td>${tglDisplay}</td>
+            <td>${formatDateID(item.tanggal)}</td>
             <td>${item.tujuan}</td>
             <td>${item.perihal}</td>
             <td><span class="status-badge ${statusClass}">${
             item.status || "Baru"
           }</span></td>
             <td>
-              <button class="btn-action btn-preview" onclick="openPreview('${fileLink}')" title="Lihat PDF">👁️</button>
-              <button class="btn-action" style="background:#FFA000;" onclick="downloadFile('${fileLink}')" title="Download PDF">⬇️</button>
-              <button class="btn-action btn-delete" onclick="deleteData('${
-                item.fileId
-              }')" title="Hapus Data">🗑️</button>
+              <div class="flex gap-2">
+                <button class="btn btn-info btn-sm" onclick="openPreview('${
+                  item.fileUrl
+                }')" title="Preview">👁️</button>
+                <button class="btn btn-warning btn-sm" onclick="downloadFile('${
+                  item.fileUrl
+                }')" title="Download">⬇️</button>
+                ${
+                  currentUser.tingkat == 1
+                    ? `<button class="btn btn-danger btn-sm" onclick="deleteData('keluar', '${item.fileId}')" title="Hapus">🗑️</button>`
+                    : ""
+                }
+              </div>
             </td>
           `;
           tbody.appendChild(tr);
         });
       }
 
-      function submitSuratKeluar(e) {
-        e.preventDefault();
-        const btn = document.getElementById("btn-save-sk");
-        const fileInput = document.getElementById("sk_file");
-        const file = fileInput.files[0];
+      // --- DISPOSISI LOGIC (UPDATED) ---
+      function renderDisposisi() {
+        const loaderNew = document.getElementById("loading-msg-dp-new");
+        const loaderHist = document.getElementById("loading-msg-dp-history");
 
-        if (!file) {
-          alert("Pilih file PDF terlebih dahulu!");
+        loaderNew.classList.remove("hidden");
+        loaderHist.classList.remove("hidden");
+
+        if (!allData || allData.length === 0) {
+          loaderNew.classList.add("hidden");
+          loaderHist.classList.add("hidden");
           return;
         }
 
-        btn.disabled = true;
-        btn.innerText = "Mengupload...";
+        let newLetters, disposedLetters;
 
+        // LOGIKA TINGKAT 3 (Waka dll)
+        if (currentUser.tingkat == 3) {
+          // Sembunyikan tabel "Surat Baru"
+          document.getElementById("section-disposisi-new").style.display =
+            "none";
+
+          // Filter riwayat disposisi HANYA untuk role ini
+          disposedLetters = allData.filter((item) => {
+            return item.status !== "Baru" && item.penerima === currentUser.role;
+          });
+          newLetters = [];
+        } else {
+          // TINGKAT 1 (Admin) & TINGKAT 2 (Staf)
+          document.getElementById("section-disposisi-new").style.display =
+            "block";
+          newLetters = allData.filter((item) => item.status === "Baru");
+
+          // Untuk Riwayat:
+          // Tingkat 2 hanya melihat semuanya (opsional), atau sesuai kebutuhan.
+          // Di sini kita biarkan keduanya melihat semua riwayat yang sudah diproses.
+          disposedLetters = allData.filter((item) => item.status !== "Baru");
+        }
+
+        // Render Tabel Baru (Hanya T1 & T2)
+        const tbodyNew = document.getElementById("tbody-disposisi-new");
+        tbodyNew.innerHTML = "";
+        if (newLetters.length === 0 && currentUser.tingkat != 3) {
+          tbodyNew.innerHTML = `<tr><td colspan="4" class="text-center" style="padding:1rem; color:var(--text-muted);">Tidak ada surat baru.</td></tr>`;
+        }
+        newLetters.forEach((item) => {
+          tbodyNew.innerHTML += `
+            <tr>
+              <td>${item.noSurat}</td>
+              <td>${item.pengirim}</td>
+              <td>${item.perihal}</td>
+              <td><button class="btn btn-warning btn-sm w-full" onclick="openDisposisiModal('${item.fileId}')">Buat Disposisi</button></td>
+            </tr>
+          `;
+        });
+
+        // Render Riwayat
+        const tbodyHistory = document.getElementById("tbody-disposisi-history");
+        tbodyHistory.innerHTML = "";
+        if (disposedLetters.length === 0) {
+          tbodyHistory.innerHTML = `<tr><td colspan="6" class="text-center" style="padding:1rem; color:var(--text-muted);">Belum ada riwayat disposisi.</td></tr>`;
+        }
+        disposedLetters.forEach((item) => {
+          // TOMBOL KHUSUS UNTUK TINGKAT 1 (Edit & Delete)
+          const adminActions =
+            currentUser.tingkat == 1
+              ? `
+            <button class="btn btn-sm" style="background-color: #8b5cf6; color: white;" onclick="openDisposisiModal('${item.fileId}', true)" title="Edit Disposisi">✏️</button>
+            <button class="btn btn-danger btn-sm" onclick="deleteData('masuk', '${item.fileId}')" title="Hapus">🗑️</button>
+          `
+              : "";
+
+          tbodyHistory.innerHTML += `
+            <tr>
+              <td>${item.noSurat}</td>
+              <td>${item.pengirim}</td>
+              <td>${item.perihal}</td>
+              <td><span class="status-badge status-baru">${
+                item.penerima || "-"
+              }</span></td>
+              <td>${item.instruksi || "-"}</td>
+              <td>
+                 <div class="flex gap-2 justify-center">
+                    <button class="btn btn-info btn-sm" onclick="openPreview('${
+                      item.fileUrl
+                    }')" title="Preview">👁️</button>
+                    <button class="btn btn-warning btn-sm" onclick="downloadFile('${
+                      item.fileUrl
+                    }')" title="Download">⬇️</button>
+                    ${adminActions}
+                 </div>
+              </td>
+            </tr>
+          `;
+        });
+
+        loaderNew.classList.add("hidden");
+        loaderHist.classList.add("hidden");
+      }
+      // --- SUBMIT LOGIC ---
+      function handleFileUpload(formData, type, btnId, fetchSuccess) {
+        const btn = document.getElementById(btnId);
+        const fileInputId = type === "masuk" ? "sm_file" : "sk_file";
+        const file = document.getElementById(fileInputId).files[0];
+        if (!file) {
+          showToast("Wajib memilih file PDF!", "error");
+          return;
+        }
+        btn.disabled = true;
+        btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; display:inline-block; border-width:2px; margin-right:8px; border-color:rgba(255,255,255,0.3); border-top-color:#fff;"></span> Uploading...`;
         const reader = new FileReader();
         reader.readAsDataURL(file);
-
         reader.onload = function () {
-          const base64Data = reader.result;
-
           const payload = {
-            action: "create_keluar",
-            noAgenda: document.getElementById("sk_agenda").value,
-            noSurat: document.getElementById("sk_surat").value,
-            tanggal: document.getElementById("sk_tanggal").value,
-            tujuan: document.getElementById("sk_tujuan").value,
-            perihal: document.getElementById("sk_perihal").value,
+            ...formData,
             fileName: file.name,
             mimeType: file.type,
-            fileBase64: base64Data,
+            fileBase64: reader.result,
           };
-
           fetch(SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
@@ -1283,171 +1707,102 @@
             body: JSON.stringify(payload),
           })
             .then(() => {
-              alert("Surat Keluar Berhasil Disimpan!");
-              document.getElementById("form-sk").reset();
-              fetchDataKeluar();
+              showToast("Data berhasil disimpan!");
+              document
+                .getElementById(type === "masuk" ? "form-sm" : "form-sk")
+                .reset();
+              fetchSuccess();
             })
             .catch((err) => {
               console.error(err);
-              alert("Terjadi kesalahan saat upload.");
+              showToast("Gagal menyimpan data.", "error");
             })
             .finally(() => {
               btn.disabled = false;
-              btn.innerText = "Simpan Surat Keluar";
+              btn.innerText = "Simpan Data";
             });
         };
       }
-
-      // --- BAGIAN DISPOSISI ---
-
-      // --- RENDER TABEL DISPOSISI (DENGAN LOADER) ---
-      function renderDisposisi() {
-        // 1. Tampilkan Loading
-        document.getElementById("loading-msg-dp").style.display = "block";
-
-        // 2. Pastikan data ada (Jika data kosong, hilangkan loading dan keluar)
-        if (!allData || allData.length === 0) {
-          document.getElementById("loading-msg-dp").style.display = "none";
-          return;
-        }
-
-        // 3. Pecah data: 'Baru' vs 'Diteruskan'
-        const newLetters = allData.filter((item) => item.status === "Baru");
-        const disposedLetters = allData.filter(
-          (item) => item.status !== "Baru"
-        );
-
-        // --- RENDER ATAS (SURAT BARU) ---
-        const tbodyNew = document.getElementById("tbody-disposisi-new");
-        tbodyNew.innerHTML = "";
-
-        if (newLetters.length === 0) {
-          tbodyNew.innerHTML =
-            '<tr><td colspan="4" style="text-align:center; padding:20px; color:#888;">Tidak ada surat baru.</td></tr>';
-        }
-
-        newLetters.forEach((item) => {
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${item.noSurat}</td>
-            <td>${item.pengirim}</td>
-            <td>${item.perihal}</td>
-            <td>
-              <button class="btn-action" style="background:#FFA000;" onclick="openDisposisiModal('${item.fileId}')">Buat Disposisi</button>
-            </td>
-          `;
-          tbodyNew.appendChild(tr);
-        });
-
-        // --- RENDER BAWAH (RIWAYAT) ---
-        const tbodyHistory = document.getElementById("tbody-disposisi-history");
-        tbodyHistory.innerHTML = "";
-
-        if (disposedLetters.length === 0) {
-          tbodyHistory.innerHTML =
-            '<tr><td colspan="6" style="text-align:center; padding:20px; color:#888;">Belum ada riwayat disposisi.</td></tr>';
-        }
-
-        disposedLetters.forEach((item) => {
-          const tr = document.createElement("tr");
-          const fileLink = item.fileUrl;
-          const penerima = item.penerima || "-";
-          const instruksi = item.instruksi || "-";
-
-          tr.innerHTML = `
-            <td>${item.noSurat}</td>
-            <td>${item.pengirim}</td>
-            <td>${item.perihal}</td>
-            <td>${penerima}</td>
-            <td>${instruksi}</td>
-            <td>
-              <button class="btn-action btn-preview" onclick="openPreview('${fileLink}')" title="Show">👁️</button>
-              <button class="btn-action" style="background:#FFA000;" onclick="downloadFile('${fileLink}')" title="Download">⬇️</button>
-              <button class="btn-action" style="background:#2196F3;" onclick="openDisposisiModal('${item.fileId}', true)" title="Edit Disposisi">✏️</button>
-              <button class="btn-action btn-delete" onclick="deleteData('${item.fileId}')" title="Hapus">🗑️</button>
-            </td>
-          `;
-          tbodyHistory.appendChild(tr);
-        });
-
-        // 4. Sembunyikan Loading setelah selesai render
-        document.getElementById("loading-msg-dp").style.display = "none";
+      function submitSuratMasuk(e) {
+        e.preventDefault();
+        const payload = {
+          action: "create",
+          noAgenda: document.getElementById("sm_agenda").value,
+          noSurat: document.getElementById("sm_surat").value,
+          tglSurat: document.getElementById("sm_tgl_surat").value,
+          tglTerima: document.getElementById("sm_tgl_terima").value,
+          pengirim: document.getElementById("sm_pengirim").value,
+          perihal: document.getElementById("sm_perihal").value,
+        };
+        handleFileUpload(payload, "masuk", "btn-save-sm", fetchData);
       }
-      // BUKA MODAL DISPOSISI (BERSIH)
-      // 2. Buka Modal Disposisi (RESET CHECKBOX)
+      function submitSuratKeluar(e) {
+        e.preventDefault();
+        const payload = {
+          action: "create_keluar",
+          noAgenda: document.getElementById("sk_agenda").value,
+          noSurat: document.getElementById("sk_surat").value,
+          tanggal: document.getElementById("sk_tanggal").value,
+          tujuan: document.getElementById("sk_tujuan").value,
+          perihal: document.getElementById("sk_perihal").value,
+        };
+        handleFileUpload(payload, "keluar", "btn-save-sk", fetchDataKeluar);
+      }
+
+      // --- DISPOSISI FORM ---
       function openDisposisiModal(fileId, isEdit = false) {
         const modal = document.getElementById("disposisiModal");
         const form = document.getElementById("form-disposisi");
         form.reset();
-
-        // RESET CHECKBOX KE TIDAK DICENTANG (Karena data tidak disimpan)
         document.getElementById("disp_dicedk").checked = false;
-
-        document.getElementById("disp_fileId").value = fileId;
-
         const item = allData.find((d) => d.fileId === fileId);
         if (item) {
+          document.getElementById("disp_fileId").value = fileId;
           document.getElementById("disp_nosurat").value = item.noSurat;
           document.getElementById("disp_pengirim").value = item.pengirim;
           document.getElementById("disp_perihal").value = item.perihal;
           document.getElementById("disp_fileUrl").value = item.fileUrl;
-
-          const btnView = document.getElementById("disp_viewBtn");
-          const btnDownload = document.getElementById("disp_downloadBtn");
-
-          btnView.onclick = function () {
+          document.getElementById("disp_viewBtn").onclick = () =>
             openPreview(item.fileUrl);
-          };
-
-          btnDownload.onclick = function () {
+          document.getElementById("disp_downloadBtn").onclick = () =>
             downloadFile(item.fileUrl);
-          };
 
           if (isEdit) {
-            document.getElementById("disp_penerima").value = item.penerima;
-            document.getElementById("disp_instruksi").value = item.instruksi;
+            document.getElementById("disp_penerima").value =
+              item.penerima || "";
+            document.getElementById("disp_instruksi").value =
+              item.instruksi || "";
             document.getElementById("modalTitleDisposisi").innerText =
               "Edit Disposisi";
+            document.getElementById("btnSubmitDisp").innerText =
+              "Update Disposisi";
           } else {
             document.getElementById("modalTitleDisposisi").innerText =
               "Buat Disposisi Baru";
+            document.getElementById("btnSubmitDisp").innerText =
+              "Kirim Disposisi";
           }
         }
-        modal.style.display = "flex";
+        modal.classList.add("show");
       }
-
       function closeDisposisiModal() {
-        document.getElementById("disposisiModal").style.display = "none";
+        document.getElementById("disposisiModal").classList.remove("show");
       }
-
-      // SUBMIT DISPOSISI (BERSIH & UPDATE LANGSUNG)
-      // 3. Submit Disposisi (PERBAIKAN LOADING & UPDATE)
-      // 3. Submit Disposisi (HANYA VALIDASI FRONTEND)
       function submitDisposisi(e) {
         e.preventDefault();
         const btn = document.getElementById("btnSubmitDisp");
-        const originalText = "Kirim Disposisi";
-
-        // --- VALIDASI WAJIB CENTANG ---
-        const isDicek = document.getElementById("disp_dicedk").checked;
-        if (!isDicek) {
-          alert("Wajib mencentang 'Telah Dicek Pimpinan'!");
-          return; // Batalkan proses submit jika tidak dicentang
+        if (!document.getElementById("disp_dicedk").checked) {
+          showToast("Wajib centang 'Telah Dicek Pimpinan'!", "error");
+          return;
         }
-
         btn.disabled = true;
         btn.innerText = "Menyimpan...";
-
         const payload = {
           action: "update_disposisi",
           fileId: document.getElementById("disp_fileId").value,
           penerima: document.getElementById("disp_penerima").value,
           instruksi: document.getElementById("disp_instruksi").value,
-          // TIDAK PERLU MENGIRIM data dicedk ke Sheet
         };
-
-        document.getElementById("loading-msg-dp").style.display = "block";
-
         fetch(SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
@@ -1455,7 +1810,7 @@
           body: JSON.stringify(payload),
         })
           .then(() => {
-            alert("Disposisi Berhasil Disimpan!");
+            showToast("Disposisi berhasil disimpan!");
             closeDisposisiModal();
             return fetch(SCRIPT_URL);
           })
@@ -1463,16 +1818,78 @@
           .then((data) => {
             allData = data;
             renderDisposisi();
+            updateDashboard();
           })
           .catch((err) => {
             console.error(err);
-            alert("Gagal menyimpan disposisi.");
+            showToast("Gagal menyimpan disposisi.", "error");
           })
           .finally(() => {
-            document.getElementById("loading-msg-dp").style.display = "none";
             btn.disabled = false;
-            btn.innerText = originalText;
+            btn.innerText = document
+              .getElementById("modalTitleDisposisi")
+              .innerText.includes("Edit")
+              ? "Update Disposisi"
+              : "Kirim Disposisi";
           });
+      }
+
+      // --- DELETE LOGIC ---
+      function deleteData(type, fileId) {
+        if (
+          !confirm(
+            "Apakah Anda yakin ingin menghapus data ini secara permanen?"
+          )
+        )
+          return;
+        showToast("Memproses penghapusan...", "info");
+        fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "delete", fileId: fileId }),
+        })
+          .then(() => {
+            showToast("Data berhasil dihapus!");
+            if (type === "keluar") {
+              fetchDataKeluar();
+            } else {
+              fetchData().then(() => {
+                if (
+                  document
+                    .getElementById("disposisi")
+                    .classList.contains("active")
+                )
+                  renderDisposisi();
+              });
+            }
+          })
+          .catch((err) => {
+            console.error(err);
+            showToast("Gagal menghapus data.", "error");
+          });
+      }
+
+      // --- PREVIEW & DOWNLOAD ---
+      function downloadFile(url) {
+        window.open(url, "_blank");
+      }
+      function openPreview(url) {
+        const modal = document.getElementById("pdfModal");
+        const iframe = document.getElementById("pdfFrame");
+        const dlLink = document.getElementById("modalDownloadLink");
+        const viewerUrl =
+          "https://docs.google.com/viewer?embedded=true&url=" +
+          encodeURIComponent(url);
+        iframe.src = viewerUrl;
+        dlLink.href = url;
+        modal.classList.add("show");
+      }
+      function closePreview() {
+        const modal = document.getElementById("pdfModal");
+        const iframe = document.getElementById("pdfFrame");
+        iframe.src = "";
+        modal.classList.remove("show");
       }
     </script>
   </body>
