@@ -1166,13 +1166,9 @@
                   </div>
                   <div class="form-group mt-4">
                     <label>Diteruskan Kepada</label>
+                    <!-- Dropdown sekarang kosong, isinya akan diisi oleh JavaScript -->
                     <select id="disp_penerima" class="form-control" required>
-                      <option value="">-- Pilih --</option>
-                      <option value="Waka Kesiswaan">Waka Kesiswaan</option>
-                      <option value="Waka Kurikulum">Waka Kurikulum</option>
-                      <option value="Waka Sarana">Waka Sarana</option>
-                      <option value="Kepala TU">Kepala TU</option>
-                      <option value="Humas">Humas</option>
+                      <option value="">-- Mohon Tunggu Memuat Role --</option>
                     </select>
                   </div>
                   <div class="form-group">
@@ -1263,7 +1259,7 @@
     <script>
       // --- KONFIGURASI ---
       const SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycby3xRnRIjBQekEPJT66zbjHEMl3Mzr8FoogwGqKhrDr01FDjwaAy9lTJsFeKwC54-Xj_Q/exec";
+        "https://script.google.com/macros/s/AKfycbxRfXpDrMSoJZ4RvjGdUkuxaLZkrq-mfLp2GPJ_q_mZFx1xStPrGwt2Or86bEvaS_FMiw/exec";
       let allData = [];
       let allDataKeluar = [];
       let currentUser = null;
@@ -1286,6 +1282,7 @@
             setupPermissions();
             fetchAllInitialData(); // FIX ISSUE: Ambil semua data saat load awal
             showToast(`Selamat datang kembali, ${currentUser.role}`);
+            fetchRoles();
             return;
           } else {
             // SESSION HABIS
@@ -1325,6 +1322,28 @@
           setTimeout(() => toast.remove(), 300);
         }, 3000);
       }
+      // --- FETCH DYNAMIC ROLES ---
+      function fetchRoles() {
+        fetch(SCRIPT_URL + "?action=get_roles")
+          .then((res) => res.json())
+          .then((roles) => {
+            const select = document.getElementById("disp_penerima");
+            select.innerHTML = '<option value="">-- Pilih Role --</option>'; // Reset option pertama
+
+            // Masukkan Role ke Dropdown
+            roles.forEach((role) => {
+              const option = document.createElement("option");
+              option.value = role;
+              option.text = role;
+              select.appendChild(option);
+            });
+          })
+          .catch((err) => {
+            console.error("Gagal memuat role:", err);
+            document.getElementById("disp_penerima").innerHTML =
+              '<option value="">Gagal memuat role</option>';
+          });
+      }
 
       // --- AUTH & NAVIGATION ---
       function login(e) {
@@ -1359,6 +1378,7 @@
 
               setupPermissions();
               fetchAllInitialData(); // FIX ISSUE: Ambil semua data setelah login
+              fetchRoles();
               showToast(`Login Berhasil! Hai, ${currentUser.role}`);
             } else {
               showToast(
@@ -1894,4 +1914,3 @@
     </script>
   </body>
 </html>
-
