@@ -671,6 +671,17 @@
           padding: 0 1rem;
         }
       }
+      /* Tambahan Style Logo Login */
+      .login-logo {
+        width: 90px; /* Ukuran Logo */
+        height: 90px;
+        object-fit: contain;
+        margin-bottom: 1rem; /* Jarak ke bawah */
+        border-radius: 50%; /* Membuat logo bulat, hapus jika ingin kotak */
+        background: white; /* Background putih di belakang logo transparan */
+        padding: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
     </style>
   </head>
   <body>
@@ -681,8 +692,14 @@
     <div id="login-page">
       <div class="login-card">
         <div class="login-header text-center">
-          <h2>Admin Login</h2>
-          <p style="color: #666; font-weight: 400">Sistem Administrasi Surat</p>
+          <img src="logo.jpg" class="login-logo" alt="Logo MTs" />
+          <h2 style="margin-bottom: 0.2rem">MTs Negeri 1 Lamongan</h2>
+          <p style="color: #666; font-weight: 500; margin-bottom: 0">
+            Sistem Administrasi Surat
+          </p>
+          <small style="color: #999"
+            >Silakan login untuk mengakses sistem</small
+          >
         </div>
         <form onsubmit="login(event)">
           <div class="form-group">
@@ -709,6 +726,29 @@
             <span>Masuk Sistem</span>
           </button>
         </form>
+
+        <div class="text-center" style="margin-top: 1.5rem; font-size: 0.85rem">
+          <a
+            onclick="hubAdminWA()"
+            style="
+              color: var(--primary-color);
+              cursor: pointer;
+              text-decoration: underline;
+              font-weight: 600;
+            "
+          >
+            Lupa Password? Hubungi Admin
+          </a>
+          <div
+            style="
+              margin-top: 5px;
+              color: var(--text-muted);
+              font-size: 0.75rem;
+            "
+          >
+            Via WhatsApp
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1259,7 +1299,7 @@
     <script>
       // --- KONFIGURASI ---
       const SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbxRfXpDrMSoJZ4RvjGdUkuxaLZkrq-mfLp2GPJ_q_mZFx1xStPrGwt2Or86bEvaS_FMiw/exec";
+        "https://script.google.com/macros/s/AKfycbx9HM2-r6A9NJ7f-AoiijFN7p4SiQ5p10R2TknS9GvwRCHxdIughZFlRRFutGNsugDrOQ/exec";
       let allData = [];
       let allDataKeluar = [];
       let currentUser = null;
@@ -1910,6 +1950,19 @@
         const iframe = document.getElementById("pdfFrame");
         iframe.src = "";
         modal.classList.remove("show");
+      }
+
+      // --- FUNGSI LUPA PASSWORD KE WA ---
+      function hubAdminWA() {
+        // GANTI NOMOR INI DENGAN NOMOR WA ADMIN ASLI (Format: 628...)
+        var noAdmin = "6285234197951";
+
+        var pesan =
+          "Halo Admin MTs Negeri 1 Lamongan,\n\nSaya lupa password untuk akun di Sistem Administrasi Surat.\nMohon bantu reset passwordnya.\n\nTerima kasih.";
+
+        var urlWA =
+          "https://wa.me/" + noAdmin + "?text=" + encodeURIComponent(pesan);
+        window.open(urlWA, "_blank");
       }
     </script>
   </body>
