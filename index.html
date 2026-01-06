@@ -1108,9 +1108,11 @@
             <div id="loading-msg-dp-new" class="loading-overlay hidden">
               <div class="spinner"></div>
             </div>
+            <!-- UPDATE HEADER TABLE 1: Menambahkan Kolom No. Agenda -->
             <table id="data-table-disposisi-new">
               <thead>
                 <tr>
+                  <th width="10%">No. Agenda</th>
                   <th width="10%">No. Surat</th>
                   <th width="15%">Pengirim</th>
                   <th>Perihal</th>
@@ -1258,9 +1260,11 @@
             <div id="loading-msg-dp-history" class="loading-overlay hidden">
               <div class="spinner"></div>
             </div>
+            <!-- UPDATE HEADER TABLE 2: Menambahkan Kolom No. Agenda -->
             <table id="data-table-disposisi-history">
               <thead>
                 <tr>
+                  <th width="10%">No. Agenda</th>
                   <th width="10%">No. Surat</th>
                   <th width="10%">Dari</th>
                   <th>Perihal</th>
@@ -1641,7 +1645,7 @@
         });
       }
 
-      // --- DISPOSISI LOGIC (UPDATED) ---
+      // --- DISPOSISI LOGIC (UPDATED WITH NO AGENDA) ---
       function renderDisposisi() {
         const loaderNew = document.getElementById("loading-msg-dp-new");
         const loaderHist = document.getElementById("loading-msg-dp-history");
@@ -1683,12 +1687,14 @@
         // Render Tabel Baru (Hanya T1 & T2)
         const tbodyNew = document.getElementById("tbody-disposisi-new");
         tbodyNew.innerHTML = "";
+        // UPDATE COLSPAN: Karena header sekarang ada 5 kolom
         if (newLetters.length === 0 && currentUser.tingkat != 3) {
-          tbodyNew.innerHTML = `<tr><td colspan="4" class="text-center" style="padding:1rem; color:var(--text-muted);">Tidak ada surat baru.</td></tr>`;
+          tbodyNew.innerHTML = `<tr><td colspan="5" class="text-center" style="padding:1rem; color:var(--text-muted);">Tidak ada surat baru.</td></tr>`;
         }
         newLetters.forEach((item) => {
           tbodyNew.innerHTML += `
             <tr>
+              <td><strong>${item.noAgenda}</strong></td>
               <td>${item.noSurat}</td>
               <td>${item.pengirim}</td>
               <td>${item.perihal}</td>
@@ -1700,8 +1706,9 @@
         // Render Riwayat
         const tbodyHistory = document.getElementById("tbody-disposisi-history");
         tbodyHistory.innerHTML = "";
+        // UPDATE COLSPAN: Karena header sekarang ada 7 kolom
         if (disposedLetters.length === 0) {
-          tbodyHistory.innerHTML = `<tr><td colspan="6" class="text-center" style="padding:1rem; color:var(--text-muted);">Belum ada riwayat disposisi.</td></tr>`;
+          tbodyHistory.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:1rem; color:var(--text-muted);">Belum ada riwayat disposisi.</td></tr>`;
         }
         disposedLetters.forEach((item) => {
           // TOMBOL KHUSUS UNTUK TINGKAT 1 (Edit & Delete)
@@ -1715,6 +1722,7 @@
 
           tbodyHistory.innerHTML += `
             <tr>
+              <td><strong>${item.noAgenda}</strong></td>
               <td>${item.noSurat}</td>
               <td>${item.pengirim}</td>
               <td>${item.perihal}</td>
