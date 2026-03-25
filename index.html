@@ -1303,7 +1303,7 @@
     <script>
       // --- KONFIGURASI ---
       const SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbx9HM2-r6A9NJ7f-AoiijFN7p4SiQ5p10R2TknS9GvwRCHxdIughZFlRRFutGNsugDrOQ/exec";
+        "https://script.google.com/macros/s/AKfycbxNbZa2EeZ4H_gGf_W37a2Jc86Az8iZGqz16BfGO7bepBfa9PV40CcDL-EG3KecN31P/exec";
       let allData = [];
       let allDataKeluar = [];
       let currentUser = null;
@@ -1749,7 +1749,7 @@
         loaderHist.classList.add("hidden");
       }
       // --- SUBMIT LOGIC ---
-      function handleFileUpload(formData, type, btnId, fetchSuccess) {
+            function handleFileUpload(formData, type, btnId, fetchSuccess) {
         const btn = document.getElementById(btnId);
         const fileInputId = type === "masuk" ? "sm_file" : "sk_file";
         const file = document.getElementById(fileInputId).files[0];
@@ -1757,8 +1757,10 @@
           showToast("Wajib memilih file PDF!", "error");
           return;
         }
+        
         btn.disabled = true;
         btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; display:inline-block; border-width:2px; margin-right:8px; border-color:rgba(255,255,255,0.3); border-top-color:#fff;"></span> Uploading...`;
+        
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = function () {
@@ -1768,22 +1770,32 @@
             mimeType: file.type,
             fileBase64: reader.result,
           };
+
+          // --- PERBAIKAN: Gunakan FormData seperti saat Login ---
+          const sendData = new FormData();
+          sendData.append("data", JSON.stringify(payload));
+
           fetch(SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
+            body: sendData,
+            // HAPUS baris headers dan mode: "no-cors" agar browser bisa membaca response error/sukses dengan benar
           })
-            .then(() => {
-              showToast("Data berhasil disimpan!");
-              document
-                .getElementById(type === "masuk" ? "form-sm" : "form-sk")
-                .reset();
-              fetchSuccess();
+            .then((res) => res.json())
+            .then((response) => {
+              // Cek response dari backend
+              if (response.result === "success" || response.result === "updated") {
+                 showToast("Data berhasil disimpan!");
+                 document.getElementById(type === "masuk" ? "form-sm" : "form-sk").reset();
+                 fetchSuccess();
+              } else {
+                 // Jika ada error dari backend (misal folder id salah)
+                 showToast("Gagal: " + (response.error || "Unknown error"), "error");
+                 console.error("Backend Error:", response);
+              }
             })
             .catch((err) => {
               console.error(err);
-              showToast("Gagal menyimpan data.", "error");
+              showToast("Gagal menyimpan data (Koneksi/Server Error).", "error");
             })
             .finally(() => {
               btn.disabled = false;
