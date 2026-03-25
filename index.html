@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sistem Administrasi Surat - MTs Negeri 1 Lamongan</title>
+    <!-- Library SheetJS untuk Export Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
       :root {
         /* COLOR PALETTE */
@@ -47,39 +49,17 @@
       }
 
       /* UTILITIES */
-      .hidden {
-        display: none !important;
-      }
-      .flex {
-        display: flex;
-      }
-      .flex-col {
-        flex-direction: column;
-      }
-      .items-center {
-        align-items: center;
-      }
-      .justify-between {
-        justify-content: space-between;
-      }
-      .gap-2 {
-        gap: 0.5rem;
-      }
-      .gap-4 {
-        gap: 1rem;
-      }
-      .w-full {
-        width: 100%;
-      }
-      .mt-4 {
-        margin-top: 1.5rem;
-      }
-      .mb-4 {
-        margin-bottom: 1.5rem;
-      }
-      .text-center {
-        text-align: center;
-      }
+      .hidden { display: none !important; }
+      .flex { display: flex; }
+      .flex-col { flex-direction: column; }
+      .items-center { align-items: center; }
+      .justify-between { justify-content: space-between; }
+      .gap-2 { gap: 0.5rem; }
+      .gap-4 { gap: 1rem; }
+      .w-full { width: 100%; }
+      .mt-4 { margin-top: 1.5rem; }
+      .mb-4 { margin-bottom: 1.5rem; }
+      .text-center { text-align: center; }
 
       /* LOADING SPINNER */
       .loading-overlay {
@@ -101,11 +81,7 @@
         border-radius: 50%;
         animation: spin 0.8s linear infinite;
       }
-      @keyframes spin {
-        to {
-          transform: rotate(360deg);
-        }
-      }
+      @keyframes spin { to { transform: rotate(360deg); } }
 
       /* --- LOGIN PAGE --- */
       #login-page {
@@ -133,11 +109,19 @@
         font-size: 1.5rem;
         margin-bottom: 0.5rem;
       }
+      .login-logo {
+        width: 90px;
+        height: 90px;
+        object-fit: contain;
+        margin-bottom: 1rem;
+        border-radius: 50%;
+        background: white;
+        padding: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
 
       /* --- FORM ELEMENTS --- */
-      .form-group {
-        margin-bottom: 1.25rem;
-      }
+      .form-group { margin-bottom: 1.25rem; }
       .form-group label {
         display: block;
         margin-bottom: 0.5rem;
@@ -161,10 +145,7 @@
         background-color: #fff;
         box-shadow: var(--shadow-glow);
       }
-      textarea.form-control {
-        resize: vertical;
-        min-height: 80px;
-      }
+      textarea.form-control { resize: vertical; min-height: 80px; }
 
       /* --- BUTTONS --- */
       .btn {
@@ -188,55 +169,24 @@
         transform: translateY(-1px);
         box-shadow: var(--shadow-md);
       }
-      .btn:active {
-        transform: translateY(0);
-      }
-      .btn:disabled {
-        background-color: #d1d5db;
-        cursor: not-allowed;
-        transform: none;
-      }
-      .btn-sm {
-        padding: 0.5rem 1rem;
-        font-size: 0.85rem;
-        width: auto;
-      }
+      .btn:active { transform: translateY(0); }
+      .btn:disabled { background-color: #d1d5db; cursor: not-allowed; transform: none; }
+      .btn-sm { padding: 0.5rem 1rem; font-size: 0.85rem; width: auto; }
       .btn-outline {
         background: transparent;
         border: 1px solid var(--primary-color);
         color: var(--primary-color);
       }
-      .btn-outline:hover {
-        background: var(--primary-color);
-        color: white;
-      }
-      .btn-danger {
-        background-color: #ef4444;
-        color: white;
-      }
-      .btn-danger:hover {
-        background-color: #b91c1c;
-      }
-      .btn-warning {
-        background-color: #f59e0b;
-        color: white;
-      }
-      .btn-warning:hover {
-        background-color: #d97706;
-      }
-      .btn-info {
-        background-color: #3b82f6;
-        color: white;
-      }
-      .btn-info:hover {
-        background-color: #2563eb;
-      }
+      .btn-outline:hover { background: var(--primary-color); color: white; }
+      .btn-danger { background-color: #ef4444; color: white; }
+      .btn-danger:hover { background-color: #b91c1c; }
+      .btn-warning { background-color: #f59e0b; color: white; }
+      .btn-warning:hover { background-color: #d97706; }
+      .btn-info { background-color: #3b82f6; color: white; }
+      .btn-info:hover { background-color: #2563eb; }
 
       /* --- MAIN LAYOUT --- */
-      #main-app {
-        display: none;
-        min-height: 100vh;
-      }
+      #main-app { display: none; min-height: 100vh; }
       header {
         background-color: var(--bg-card);
         color: var(--text-main);
@@ -257,11 +207,7 @@
         align-items: center;
         gap: 10px;
       }
-      .user-info {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-      }
+      .user-info { display: flex; align-items: center; gap: 10px; }
       .badge {
         background: var(--primary-light);
         color: var(--primary-dark);
@@ -291,12 +237,8 @@
         transition: color 0.2s;
         font-size: 0.95rem;
       }
-      .nav-item:hover {
-        color: var(--primary-color);
-      }
-      .nav-item.active {
-        color: var(--primary-color);
-      }
+      .nav-item:hover { color: var(--primary-color); }
+      .nav-item.active { color: var(--primary-color); }
       .nav-item.active::after {
         content: "";
         position: absolute;
@@ -309,28 +251,10 @@
       }
 
       /* CONTENT AREA */
-      .content {
-        padding: 2rem;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-      .page-section {
-        display: none;
-        animation: fadeIn 0.3s ease;
-      }
-      .page-section.active {
-        display: block;
-      }
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(5px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
+      .content { padding: 2rem; max-width: 1400px; margin: 0 auto; }
+      .page-section { display: none; animation: fadeIn 0.3s ease; }
+      .page-section.active { display: block; }
+      @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
       /* DASHBOARD CARDS */
       .welcome-card {
@@ -357,81 +281,30 @@
         gap: 0.5rem;
         transition: transform 0.2s;
       }
-      .stat-card:hover {
-        transform: translateY(-3px);
-      }
-      .stat-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.5rem;
-      }
-      .stat-label {
-        font-size: 0.8rem;
-        color: var(--text-muted);
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-      .stat-value {
-        font-size: 2.5rem;
-        font-weight: 800;
-        color: var(--text-main);
-        line-height: 1;
-      }
-      .stat-icon {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-      }
-      .stat-sm {
-        border-left: 4px solid #3b82f6;
-      }
-      .stat-sm .stat-icon {
-        background: #dbeafe;
-        color: #1e40af;
-      }
-      .stat-sk {
-        border-left: 4px solid #10b981;
-      }
-      .stat-sk .stat-icon {
-        background: #d1fae5;
-        color: #065f46;
-      }
-      .stat-pending {
-        border-left: 4px solid #f59e0b;
-      }
-      .stat-pending .stat-icon {
-        background: #fef3c7;
-        color: #92400e;
-      }
-      .stat-done {
-        border-left: 4px solid #8b5cf6;
-      }
-      .stat-done .stat-icon {
-        background: #ede9fe;
-        color: #5b21b6;
-      }
+      .stat-card:hover { transform: translateY(-3px); }
+      .stat-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+      .stat-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+      .stat-value { font-size: 2.5rem; font-weight: 800; color: var(--text-main); line-height: 1; }
+      .stat-icon { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+      
+      .stat-sm { border-left: 4px solid #3b82f6; }
+      .stat-sm .stat-icon { background: #dbeafe; color: #1e40af; }
+      .stat-sk { border-left: 4px solid #10b981; }
+      .stat-sk .stat-icon { background: #d1fae5; color: #065f46; }
+      .stat-pending { border-left: 4px solid #f59e0b; }
+      .stat-pending .stat-icon { background: #fef3c7; color: #92400e; }
+      .stat-done { border-left: 4px solid #8b5cf6; }
+      .stat-done .stat-icon { background: #ede9fe; color: #5b21b6; }
 
-      /* SPLIT LAYOUT */
-      .sm-container {
-        display: flex;
-        gap: 24px;
-        align-items: flex-start;
-      }
+      /* CONTAINER VERTICAL */
+      .sm-container { display: flex; flex-direction: column; gap: 24px; }
       .sm-form-col {
-        flex: 0 0 380px;
         background: var(--bg-card);
         padding: 1.5rem;
         border-radius: var(--radius);
         box-shadow: var(--shadow-md);
-        position: sticky;
-        top: 100px;
         border: 1px solid var(--border-color);
+        width: 100%;
       }
       .sm-table-col {
         flex: 1;
@@ -480,28 +353,26 @@
         text-transform: uppercase;
         font-size: 0.75rem;
         letter-spacing: 0.5px;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
       }
-      th:first-child {
-        border-top-left-radius: var(--radius-sm);
-      }
-      th:last-child {
-        border-top-right-radius: var(--radius-sm);
-      }
+      th:hover { background-color: #f1f5f9; }
+      th:first-child { border-top-left-radius: var(--radius-sm); }
+      th:last-child { border-top-right-radius: var(--radius-sm); }
       td {
         padding: 12px 16px;
         border-bottom: 1px solid var(--border-color);
         color: var(--text-main);
         vertical-align: middle;
       }
-      tr:hover td {
-        background-color: #f9fafb;
-      }
-      tr:last-child td:first-child {
-        border-bottom-left-radius: var(--radius-sm);
-      }
-      tr:last-child td:last-child {
-        border-bottom-right-radius: var(--radius-sm);
-      }
+      tr:hover td { background-color: #f9fafb; }
+      tr:last-child td:first-child { border-bottom-left-radius: var(--radius-sm); }
+      tr:last-child td:last-child { border-bottom-right-radius: var(--radius-sm); }
+
+      /* Sort Icon Styling */
+      .sort-icon { margin-left: 5px; font-size: 0.7rem; color: var(--text-light); }
+      th.active-sort .sort-icon { color: var(--primary-color); }
 
       /* STATUS BADGES */
       .status-badge {
@@ -513,18 +384,9 @@
         text-transform: uppercase;
         letter-spacing: 0.5px;
       }
-      .status-baru {
-        background-color: #dbeafe;
-        color: #1e40af;
-      }
-      .status-proses {
-        background-color: #fef3c7;
-        color: #92400e;
-      }
-      .status-selesai {
-        background-color: #d1fae5;
-        color: #065f46;
-      }
+      .status-baru { background-color: #dbeafe; color: #1e40af; }
+      .status-proses { background-color: #fef3c7; color: #92400e; }
+      .status-selesai { background-color: #d1fae5; color: #065f46; }
 
       /* MODALS */
       .modal-backdrop {
@@ -539,10 +401,7 @@
         opacity: 0;
         transition: opacity 0.3s ease;
       }
-      .modal-backdrop.show {
-        display: flex;
-        opacity: 1;
-      }
+      .modal-backdrop.show { display: flex; opacity: 1; }
       .modal-content {
         background-color: var(--bg-card);
         width: 90%;
@@ -556,15 +415,8 @@
         transform: scale(0.95);
         transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       }
-      #pdfModal .modal-content {
-        width: 95vw;
-        height: 90vh;
-        max-width: none;
-        max-height: none;
-      }
-      .modal-backdrop.show .modal-content {
-        transform: scale(1);
-      }
+      #pdfModal .modal-content { width: 95vw; height: 90vh; max-width: none; max-height: none; }
+      .modal-backdrop.show .modal-content { transform: scale(1); }
       .modal-header {
         padding: 1.25rem 1.5rem;
         background: #f9fafb;
@@ -573,11 +425,7 @@
         align-items: center;
         border-bottom: 1px solid var(--border-color);
       }
-      .modal-header h3 {
-        font-size: 1.1rem;
-        color: var(--text-main);
-        font-weight: 700;
-      }
+      .modal-header h3 { font-size: 1.1rem; color: var(--text-main); font-weight: 700; }
       .modal-body {
         flex: 1;
         padding: 0;
@@ -585,16 +433,8 @@
         background: #e5e7eb;
         overflow: hidden;
       }
-      .modal-body iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-      }
-      .modal-body.form-padding {
-        padding: 1.5rem;
-        overflow-y: auto;
-        background: white;
-      }
+      .modal-body iframe { width: 100%; height: 100%; border: none; }
+      .modal-body.form-padding { padding: 1.5rem; overflow-y: auto; background: white; }
       .close-btn {
         font-size: 24px;
         line-height: 1;
@@ -605,9 +445,7 @@
         background: none;
         padding: 0 5px;
       }
-      .close-btn:hover {
-        color: #ef4444;
-      }
+      .close-btn:hover { color: #ef4444; }
 
       /* TOAST NOTIFICATION */
       #toast-container {
@@ -633,54 +471,14 @@
         min-width: 280px;
         font-weight: 500;
       }
-      .toast.error {
-        border-left-color: #ef4444;
-      }
-      .toast.success {
-        border-left-color: #10b981;
-      }
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateX(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateX(0);
-        }
-      }
-      @keyframes fadeOut {
-        to {
-          opacity: 0;
-          transform: translateY(-10px);
-        }
-      }
+      .toast.error { border-left-color: #ef4444; }
+      .toast.success { border-left-color: #10b981; }
+      @keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+      @keyframes fadeOut { to { opacity: 0; transform: translateY(-10px); } }
 
       /* RESPONSIVE */
       @media (max-width: 992px) {
-        .sm-container {
-          flex-direction: column;
-        }
-        .sm-form-col {
-          flex: 1;
-          width: 100%;
-          position: static;
-          margin-bottom: 20px;
-        }
-        .navbar {
-          padding: 0 1rem;
-        }
-      }
-      /* Tambahan Style Logo Login */
-      .login-logo {
-        width: 90px; /* Ukuran Logo */
-        height: 90px;
-        object-fit: contain;
-        margin-bottom: 1rem; /* Jarak ke bawah */
-        border-radius: 50%; /* Membuat logo bulat, hapus jika ingin kotak */
-        background: white; /* Background putih di belakang logo transparan */
-        padding: 10px;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        .navbar { padding: 0 1rem; }
       }
     </style>
   </head>
@@ -694,60 +492,25 @@
         <div class="login-header text-center">
           <img src="logo.jpg" class="login-logo" alt="Logo MTs" />
           <h2 style="margin-bottom: 0.2rem">MTs Negeri 1 Lamongan</h2>
-          <p style="color: #666; font-weight: 500; margin-bottom: 0">
-            Sistem Administrasi Surat
-          </p>
-          <small style="color: #999"
-            >Silakan login untuk mengakses sistem</small
-          >
+          <p style="color: #666; font-weight: 500; margin-bottom: 0">Sistem Administrasi Surat</p>
+          <small style="color: #999">Silakan login untuk mengakses sistem</small>
         </div>
         <form onsubmit="login(event)">
           <div class="form-group">
             <label>Username</label>
-            <input
-              type="text"
-              id="username"
-              class="form-control"
-              placeholder="Masukkan username"
-              required
-            />
+            <input type="text" id="username" class="form-control" placeholder="Masukkan username" required />
           </div>
           <div class="form-group">
             <label>Password</label>
-            <input
-              type="password"
-              id="password"
-              class="form-control"
-              placeholder="Masukkan password"
-              required
-            />
+            <input type="password" id="password" class="form-control" placeholder="Masukkan password" required />
           </div>
-          <button type="submit" class="btn" id="btn-login">
-            <span>Masuk Sistem</span>
-          </button>
+          <button type="submit" class="btn" id="btn-login"><span>Masuk Sistem</span></button>
         </form>
-
         <div class="text-center" style="margin-top: 1.5rem; font-size: 0.85rem">
-          <a
-            onclick="hubAdminWA()"
-            style="
-              color: var(--primary-color);
-              cursor: pointer;
-              text-decoration: underline;
-              font-weight: 600;
-            "
-          >
+          <a onclick="hubAdminWA()" style="color: var(--primary-color); cursor: pointer; text-decoration: underline; font-weight: 600;">
             Lupa Password? Hubungi Admin
           </a>
-          <div
-            style="
-              margin-top: 5px;
-              color: var(--text-muted);
-              font-size: 0.75rem;
-            "
-          >
-            Via WhatsApp
-          </div>
+          <div style="margin-top: 5px; color: var(--text-muted); font-size: 0.75rem;">Via WhatsApp</div>
         </div>
       </div>
     </div>
@@ -755,50 +518,19 @@
     <!-- MAIN APP -->
     <div id="main-app">
       <header>
-        <div class="brand">
-          <h3>📂 MTs Negeri 1 Lamongan</h3>
-        </div>
+        <div class="brand"><h3>📂 MTs Negeri 1 Lamongan</h3></div>
         <div class="user-info">
           <span id="user-role-badge" class="badge">Role</span>
-          <!-- Tombol Refresh -->
-          <button
-            class="btn btn-sm btn-outline"
-            onclick="refreshAllData()"
-            title="Perbarui Data"
-          >
-            🔄 Refresh
-          </button>
-          <button class="btn btn-danger btn-sm" onclick="logout()">
-            Logout
-          </button>
+          <button class="btn btn-sm btn-outline" onclick="refreshAllData()" title="Perbarui Data">🔄 Refresh</button>
+          <button class="btn btn-danger btn-sm" onclick="logout()">Logout</button>
         </div>
       </header>
 
       <nav class="navbar">
-        <div class="nav-item active" onclick="switchTab('dashboard', this)">
-          Dashboard
-        </div>
-        <div
-          class="nav-item"
-          id="nav-sm"
-          onclick="switchTab('surat-masuk', this)"
-        >
-          Surat Masuk
-        </div>
-        <div
-          class="nav-item"
-          id="nav-sk"
-          onclick="switchTab('surat-keluar', this)"
-        >
-          Surat Keluar
-        </div>
-        <div
-          class="nav-item"
-          id="nav-disp"
-          onclick="switchTab('disposisi', this)"
-        >
-          Disposisi
-        </div>
+        <div class="nav-item active" onclick="switchTab('dashboard', this)">Dashboard</div>
+        <div class="nav-item" id="nav-sm" onclick="switchTab('surat-masuk', this)">Surat Masuk</div>
+        <div class="nav-item" id="nav-sk" onclick="switchTab('surat-keluar', this)">Surat Keluar</div>
+        <div class="nav-item" id="nav-disp" onclick="switchTab('disposisi', this)">Disposisi</div>
       </nav>
 
       <div class="content">
@@ -806,37 +538,23 @@
         <div id="dashboard" class="page-section active">
           <div class="welcome-card">
             <h3 id="welcome-msg">Selamat Datang!</h3>
-            <p class="mb-4" style="color: var(--text-muted)">
-              Ringkasan aktivitas surat hari ini.
-            </p>
+            <p class="mb-4" style="color: var(--text-muted)">Ringkasan aktivitas surat hari ini.</p>
           </div>
           <div class="stat-grid">
             <div class="stat-card stat-sm">
-              <div class="stat-header">
-                <div class="stat-label">Total Surat Masuk</div>
-                <div class="stat-icon">📥</div>
-              </div>
+              <div class="stat-header"><div class="stat-label">Total Surat Masuk</div><div class="stat-icon">📥</div></div>
               <div class="stat-value" id="count-sm">0</div>
             </div>
             <div class="stat-card stat-sk">
-              <div class="stat-header">
-                <div class="stat-label">Total Surat Keluar</div>
-                <div class="stat-icon">📤</div>
-              </div>
+              <div class="stat-header"><div class="stat-label">Total Surat Keluar</div><div class="stat-icon">📤</div></div>
               <div class="stat-value" id="count-sk">0</div>
             </div>
             <div class="stat-card stat-pending">
-              <div class="stat-header">
-                <div class="stat-label">Menunggu Disposisi</div>
-                <div class="stat-icon">⏳</div>
-              </div>
+              <div class="stat-header"><div class="stat-label">Menunggu Disposisi</div><div class="stat-icon">⏳</div></div>
               <div class="stat-value" id="count-pending">0</div>
             </div>
             <div class="stat-card stat-done">
-              <div class="stat-header">
-                <div class="stat-label">Sudah Disposisi</div>
-                <div class="stat-icon">✅</div>
-              </div>
+              <div class="stat-header"><div class="stat-label">Sudah Disposisi</div><div class="stat-icon">✅</div></div>
               <div class="stat-value" id="count-done">0</div>
             </div>
           </div>
@@ -846,124 +564,47 @@
         <div id="surat-masuk" class="page-section">
           <div class="sm-container">
             <div class="sm-form-col">
-              <div class="section-title">Tambah Surat Masuk</div>
+              <div class="section-title">📝 Tambah Surat Masuk</div>
               <form id="form-sm" onsubmit="submitSuratMasuk(event)">
-                <div class="form-group">
-                  <label>No. Agenda</label
-                  ><input
-                    type="text"
-                    id="sm_agenda"
-                    class="form-control"
-                    required
-                    placeholder="001/SM/2026"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>No. Surat</label
-                  ><input
-                    type="text"
-                    id="sm_surat"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Tanggal Surat</label
-                  ><input
-                    type="date"
-                    id="sm_tgl_surat"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Tanggal Terima</label
-                  ><input
-                    type="date"
-                    id="sm_tgl_terima"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Pengirim</label
-                  ><input
-                    type="text"
-                    id="sm_pengirim"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Perihal</label
-                  ><input
-                    type="text"
-                    id="sm_perihal"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label>File PDF</label
-                  ><input
-                    type="file"
-                    id="sm_file"
-                    class="form-control"
-                    accept=".pdf"
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn" id="btn-save-sm">
-                  Simpan Data
-                </button>
+                <div class="form-group"><label>No. Agenda</label><input type="text" id="sm_agenda" class="form-control" required placeholder="001/SM/2026" /></div>
+                <div class="form-group"><label>No. Surat</label><input type="text" id="sm_surat" class="form-control" required /></div>
+                <div class="form-group"><label>Tanggal Surat</label><input type="date" id="sm_tgl_surat" class="form-control" required /></div>
+                <div class="form-group"><label>Tanggal Terima</label><input type="date" id="sm_tgl_terima" class="form-control" required /></div>
+                <div class="form-group"><label>Pengirim</label><input type="text" id="sm_pengirim" class="form-control" required /></div>
+                <div class="form-group"><label>Perihal</label><input type="text" id="sm_perihal" class="form-control" required /></div>
+                <div class="form-group"><label>File PDF</label><input type="file" id="sm_file" class="form-control" accept=".pdf" required /></div>
+                <button type="submit" class="btn" id="btn-save-sm">Simpan Data</button>
               </form>
             </div>
+
             <div class="sm-table-col">
               <div class="filter-bar">
-                <div
-                  class="section-title"
-                  style="margin: 0; border: none; font-size: 1rem"
-                >
-                  Daftar Surat Masuk
-                </div>
+                <div class="section-title" style="margin: 0; border: none; font-size: 1rem">📂 Daftar Surat Masuk</div>
                 <div class="flex items-center gap-2">
-                  <label style="color: var(--text-muted); font-size: 0.9rem"
-                    >Filter:</label
-                  >
-                  <select
-                    id="monthFilter"
-                    class="form-control"
-                    style="width: auto; padding: 0.5rem"
-                    onchange="renderTable()"
-                  >
+                  <button class="btn btn-info btn-sm" onclick="exportToExcel('masuk')">📥 Excel</button>
+                  <label style="color: var(--text-muted); font-size: 0.9rem">Filter:</label>
+                  <select id="monthFilter" class="form-control" style="width: auto; padding: 0.5rem" onchange="renderTable()">
                     <option value="all">Semua Bulan</option>
-                    <option value="01">Januari</option>
-                    <option value="02">Februari</option>
-                    <option value="03">Maret</option>
-                    <option value="04">April</option>
-                    <option value="05">Mei</option>
-                    <option value="06">Juni</option>
-                    <option value="07">Juli</option>
-                    <option value="08">Agustus</option>
-                    <option value="09">September</option>
-                    <option value="10">Oktober</option>
-                    <option value="11">November</option>
-                    <option value="12">Desember</option>
+                    <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option>
+                    <option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option>
+                    <option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option>
+                    <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                  </select>
+                  <select id="yearFilter" class="form-control" style="width: auto; padding: 0.5rem" onchange="renderTable()">
+                    <option value="all">Semua Tahun</option>
                   </select>
                 </div>
               </div>
-              <div id="loading-msg-sm" class="loading-overlay hidden">
-                <div class="spinner"></div>
-              </div>
+              <div id="loading-msg-sm" class="loading-overlay hidden"><div class="spinner"></div></div>
               <table id="data-table-sm">
                 <thead>
                   <tr>
-                    <th width="10%">No. Agenda</th>
-                    <th width="10%">No. Surat</th>
-                    <th width="12%">Tgl Surat</th>
-                    <th width="12%">Tgl Terima</th>
-                    <th width="15%">Pengirim</th>
-                    <th width="15%">Perihal</th>
+                    <th width="10%" onclick="handleSort('noAgenda', 'sm')">No. Agenda <span class="sort-icon"></span></th>
+                    <th width="10%" onclick="handleSort('noSurat', 'sm')">No. Surat <span class="sort-icon"></span></th>
+                    <th width="12%" onclick="handleSort('tglSurat', 'sm')">Tgl Surat <span class="sort-icon"></span></th>
+                    <th width="12%" onclick="handleSort('tglTerima', 'sm')">Tgl Terima <span class="sort-icon"></span></th>
+                    <th width="15%" onclick="handleSort('pengirim', 'sm')">Pengirim <span class="sort-icon"></span></th>
+                    <th width="15%" onclick="handleSort('perihal', 'sm')">Perihal <span class="sort-icon"></span></th>
                     <th width="10%">Status</th>
                     <th width="15%">Aksi</th>
                   </tr>
@@ -978,115 +619,45 @@
         <div id="surat-keluar" class="page-section">
           <div class="sm-container">
             <div class="sm-form-col">
-              <div class="section-title">Tambah Surat Keluar</div>
+              <div class="section-title">📝 Tambah Surat Keluar</div>
               <form id="form-sk" onsubmit="submitSuratKeluar(event)">
-                <div class="form-group">
-                  <label>No. Agenda</label
-                  ><input
-                    type="text"
-                    id="sk_agenda"
-                    class="form-control"
-                    required
-                    placeholder="001/SK/2026"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>No. Surat</label
-                  ><input
-                    type="text"
-                    id="sk_surat"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Tanggal Surat</label
-                  ><input
-                    type="date"
-                    id="sk_tanggal"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Tujuan</label
-                  ><input
-                    type="text"
-                    id="sk_tujuan"
-                    class="form-control"
-                    required
-                    placeholder="Instansi Tujuan"
-                  />
-                </div>
-                <div class="form-group">
-                  <label>Perihal</label
-                  ><input
-                    type="text"
-                    id="sk_perihal"
-                    class="form-control"
-                    required
-                  />
-                </div>
-                <div class="form-group">
-                  <label>File PDF</label
-                  ><input
-                    type="file"
-                    id="sk_file"
-                    class="form-control"
-                    accept=".pdf"
-                    required
-                  />
-                </div>
-                <button type="submit" class="btn" id="btn-save-sk">
-                  Simpan Data
-                </button>
+                <div class="form-group"><label>No. Agenda</label><input type="text" id="sk_agenda" class="form-control" required placeholder="001/SK/2026" /></div>
+                <div class="form-group"><label>No. Surat</label><input type="text" id="sk_surat" class="form-control" required /></div>
+                <div class="form-group"><label>Tanggal Surat</label><input type="date" id="sk_tanggal" class="form-control" required /></div>
+                <div class="form-group"><label>Tujuan</label><input type="text" id="sk_tujuan" class="form-control" required placeholder="Instansi Tujuan" /></div>
+                <div class="form-group"><label>Perihal</label><input type="text" id="sk_perihal" class="form-control" required /></div>
+                <div class="form-group"><label>File PDF</label><input type="file" id="sk_file" class="form-control" accept=".pdf" required /></div>
+                <button type="submit" class="btn" id="btn-save-sk">Simpan Data</button>
               </form>
             </div>
+
             <div class="sm-table-col">
               <div class="filter-bar">
-                <div
-                  class="section-title"
-                  style="margin: 0; border: none; font-size: 1rem"
-                >
-                  Daftar Surat Keluar
-                </div>
+                <div class="section-title" style="margin: 0; border: none; font-size: 1rem">📂 Daftar Surat Keluar</div>
                 <div class="flex items-center gap-2">
-                  <label style="color: var(--text-muted); font-size: 0.9rem"
-                    >Filter:</label
-                  >
-                  <select
-                    id="monthFilterKeluar"
-                    class="form-control"
-                    style="width: auto; padding: 0.5rem"
-                    onchange="renderTableKeluar()"
-                  >
+                  <button class="btn btn-info btn-sm" onclick="exportToExcel('keluar')">📥 Excel</button>
+                  <label style="color: var(--text-muted); font-size: 0.9rem">Filter:</label>
+                  <select id="monthFilterKeluar" class="form-control" style="width: auto; padding: 0.5rem" onchange="renderTableKeluar()">
                     <option value="all">Semua Bulan</option>
-                    <option value="01">Januari</option>
-                    <option value="02">Februari</option>
-                    <option value="03">Maret</option>
-                    <option value="04">April</option>
-                    <option value="05">Mei</option>
-                    <option value="06">Juni</option>
-                    <option value="07">Juli</option>
-                    <option value="08">Agustus</option>
-                    <option value="09">September</option>
-                    <option value="10">Oktober</option>
-                    <option value="11">November</option>
-                    <option value="12">Desember</option>
+                    <option value="01">Januari</option><option value="02">Februari</option><option value="03">Maret</option>
+                    <option value="04">April</option><option value="05">Mei</option><option value="06">Juni</option>
+                    <option value="07">Juli</option><option value="08">Agustus</option><option value="09">September</option>
+                    <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
+                  </select>
+                  <select id="yearFilterKeluar" class="form-control" style="width: auto; padding: 0.5rem" onchange="renderTableKeluar()">
+                    <option value="all">Semua Tahun</option>
                   </select>
                 </div>
               </div>
-              <div id="loading-msg-sk" class="loading-overlay hidden">
-                <div class="spinner"></div>
-              </div>
+              <div id="loading-msg-sk" class="loading-overlay hidden"><div class="spinner"></div></div>
               <table id="data-table-sk">
                 <thead>
                   <tr>
-                    <th width="10%">No. Agenda</th>
-                    <th width="10%">No. Surat</th>
-                    <th width="12%">Tanggal</th>
-                    <th width="15%">Tujuan</th>
-                    <th>Perihal</th>
+                    <th width="10%" onclick="handleSort('noAgenda', 'sk')">No. Agenda <span class="sort-icon"></span></th>
+                    <th width="10%" onclick="handleSort('noSurat', 'sk')">No. Surat <span class="sort-icon"></span></th>
+                    <th width="12%" onclick="handleSort('tanggal', 'sk')">Tanggal <span class="sort-icon"></span></th>
+                    <th width="15%" onclick="handleSort('tujuan', 'sk')">Tujuan <span class="sort-icon"></span></th>
+                    <th onclick="handleSort('perihal', 'sk')">Perihal <span class="sort-icon"></span></th>
                     <th width="10%">Status</th>
                     <th width="15%">Aksi</th>
                   </tr>
@@ -1099,157 +670,57 @@
 
         <!-- DISPOSISI -->
         <div id="disposisi" class="page-section">
-          <div
-            id="section-disposisi-new"
-            class="sm-table-col mb-4"
-            style="border-left: 5px solid var(--accent-color)"
-          >
+           <!-- Kode disposisi tetap sama seperti sebelumnya, untuk brevity tidak ditampilkan ulang di snippet ini jika tidak ada perubahan logic, tapi pastikan di file lengkap ada. -->
+           <!-- Saya akan sertakan kode lengkapnya di bawah -->
+           <div id="section-disposisi-new" class="sm-table-col mb-4" style="border-left: 5px solid var(--accent-color)">
             <div class="section-title">Surat Masuk Menunggu Disposisi</div>
-            <div id="loading-msg-dp-new" class="loading-overlay hidden">
-              <div class="spinner"></div>
-            </div>
-            <!-- UPDATE HEADER TABLE 1: Menambahkan Kolom No. Agenda -->
+            <div id="loading-msg-dp-new" class="loading-overlay hidden"><div class="spinner"></div></div>
             <table id="data-table-disposisi-new">
-              <thead>
-                <tr>
-                  <th width="10%">No. Agenda</th>
-                  <th width="10%">No. Surat</th>
-                  <th width="15%">Pengirim</th>
-                  <th>Perihal</th>
-                  <th width="20%">Aksi</th>
-                </tr>
-              </thead>
+              <thead><tr><th width="10%">No. Agenda</th><th width="10%">No. Surat</th><th width="15%">Pengirim</th><th>Perihal</th><th width="20%">Aksi</th></tr></thead>
               <tbody id="tbody-disposisi-new"></tbody>
             </table>
           </div>
 
           <div id="disposisiModal" class="modal-backdrop">
-            <div
-              class="modal-content"
-              style="height: auto; max-width: 600px; max-height: 90vh"
-            >
+            <div class="modal-content" style="height: auto; max-width: 600px; max-height: 90vh">
               <div class="modal-header">
                 <h3 id="modalTitleDisposisi">Form Disposisi</h3>
-                <button class="close-btn" onclick="closeDisposisiModal()">
-                  &times;
-                </button>
+                <button class="close-btn" onclick="closeDisposisiModal()">&times;</button>
               </div>
               <div class="modal-body form-padding">
                 <form id="form-disposisi" onsubmit="submitDisposisi(event)">
-                  <input type="hidden" id="disp_fileId" /><input
-                    type="hidden"
-                    id="disp_fileUrl"
-                  />
-                  <div
-                    class="form-group"
-                    style="
-                      background: #f8fafc;
-                      padding: 15px;
-                      border-radius: 8px;
-                      border: 1px solid var(--border-color);
-                    "
-                  >
-                    <label style="color: var(--text-muted); font-size: 0.8rem"
-                      >No. Surat</label
-                    >
-                    <input
-                      type="text"
-                      id="disp_nosurat"
-                      class="form-control"
-                      readonly
-                      style="
-                        background: #fff;
-                        margin-bottom: 10px;
-                        font-weight: 600;
-                      "
-                    />
+                  <input type="hidden" id="disp_fileId" /><input type="hidden" id="disp_fileUrl" />
+                  <div class="form-group" style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <label style="color: var(--text-muted); font-size: 0.8rem">No. Surat</label>
+                    <input type="text" id="disp_nosurat" class="form-control" readonly style="background: #fff; margin-bottom: 10px; font-weight: 600;" />
                     <div class="flex gap-4">
                       <div class="w-full">
-                        <label
-                          style="color: var(--text-muted); font-size: 0.8rem"
-                          >Pengirim</label
-                        ><input
-                          type="text"
-                          id="disp_pengirim"
-                          class="form-control"
-                          readonly
-                          style="background: #fff"
-                        />
+                        <label style="color: var(--text-muted); font-size: 0.8rem">Pengirim</label><input type="text" id="disp_pengirim" class="form-control" readonly style="background: #fff" />
                       </div>
                       <div class="w-full">
-                        <label
-                          style="color: var(--text-muted); font-size: 0.8rem"
-                          >Perihal</label
-                        ><input
-                          type="text"
-                          id="disp_perihal"
-                          class="form-control"
-                          readonly
-                          style="background: #fff"
-                        />
+                        <label style="color: var(--text-muted); font-size: 0.8rem">Perihal</label><input type="text" id="disp_perihal" class="form-control" readonly style="background: #fff" />
                       </div>
                     </div>
                     <div class="flex gap-2 mt-4">
-                      <button
-                        type="button"
-                        id="disp_viewBtn"
-                        class="btn btn-info btn-sm w-full"
-                      >
-                        📄 Lihat PDF
-                      </button>
-                      <button
-                        type="button"
-                        id="disp_downloadBtn"
-                        class="btn btn-warning btn-sm w-full"
-                      >
-                        ⬇️ Download
-                      </button>
+                      <button type="button" id="disp_viewBtn" class="btn btn-info btn-sm w-full">📄 Lihat PDF</button>
+                      <button type="button" id="disp_downloadBtn" class="btn btn-warning btn-sm w-full">⬇️ Download</button>
                     </div>
                   </div>
                   <div class="form-group mt-4">
                     <label>Diteruskan Kepada</label>
-                    <!-- Dropdown sekarang kosong, isinya akan diisi oleh JavaScript -->
-                    <select id="disp_penerima" class="form-control" required>
-                      <option value="">-- Mohon Tunggu Memuat Role --</option>
-                    </select>
+                    <select id="disp_penerima" class="form-control" required><option value="">-- Pilih Role --</option></select>
                   </div>
                   <div class="form-group">
                     <label>Instruksi</label>
-                    <textarea
-                      id="disp_instruksi"
-                      class="form-control"
-                      rows="3"
-                      placeholder="Tulis instruksi..."
-                      required
-                    ></textarea>
+                    <textarea id="disp_instruksi" class="form-control" rows="3" placeholder="Tulis instruksi..." required></textarea>
                   </div>
                   <div class="form-group mt-4">
-                    <label
-                      class="flex items-center gap-2"
-                      style="
-                        font-weight: 600;
-                        cursor: pointer;
-                        display: inline-flex;
-                      "
-                    >
-                      <input
-                        type="checkbox"
-                        id="disp_dicedk"
-                        style="
-                          width: 18px;
-                          height: 18px;
-                          accent-color: var(--primary-color);
-                        "
-                        required
-                      />
-                      <span style="font-size: 0.9rem; color: var(--text-main)"
-                        >Wajib: Saya menyatakan surat telah dicek pimpinan</span
-                      >
+                    <label class="flex items-center gap-2" style="font-weight: 600; cursor: pointer; display: inline-flex;">
+                      <input type="checkbox" id="disp_dicedk" style="width: 18px; height: 18px; accent-color: var(--primary-color);" required />
+                      <span style="font-size: 0.9rem; color: var(--text-main)">Wajib: Saya menyatakan surat telah dicek pimpinan</span>
                     </label>
                   </div>
-                  <button type="submit" class="btn mt-4" id="btnSubmitDisp">
-                    Kirim Disposisi
-                  </button>
+                  <button type="submit" class="btn mt-4" id="btnSubmitDisp">Kirim Disposisi</button>
                 </form>
               </div>
             </div>
@@ -1257,22 +728,9 @@
 
           <div class="sm-table-col">
             <div class="section-title">Riwayat Disposisi</div>
-            <div id="loading-msg-dp-history" class="loading-overlay hidden">
-              <div class="spinner"></div>
-            </div>
-            <!-- UPDATE HEADER TABLE 2: Menambahkan Kolom No. Agenda -->
+            <div id="loading-msg-dp-history" class="loading-overlay hidden"><div class="spinner"></div></div>
             <table id="data-table-disposisi-history">
-              <thead>
-                <tr>
-                  <th width="10%">No. Agenda</th>
-                  <th width="10%">No. Surat</th>
-                  <th width="10%">Dari</th>
-                  <th>Perihal</th>
-                  <th width="15%">Kepada</th>
-                  <th width="20%">Instruksi</th>
-                  <th width="15%">Aksi</th>
-                </tr>
-              </thead>
+              <thead><tr><th width="10%">No. Agenda</th><th width="10%">No. Surat</th><th width="10%">Dari</th><th>Perihal</th><th width="15%">Kepada</th><th width="20%">Instruksi</th><th width="15%">Aksi</th></tr></thead>
               <tbody id="tbody-disposisi-history"></tbody>
             </table>
           </div>
@@ -1286,13 +744,7 @@
         <div class="modal-header">
           <h3 id="modalTitle">Preview Dokumen</h3>
           <div class="flex gap-2">
-            <a
-              id="modalDownloadLink"
-              href="#"
-              class="btn btn-warning btn-sm"
-              target="_blank"
-              >Download</a
-            >
+            <a id="modalDownloadLink" href="#" class="btn btn-warning btn-sm" target="_blank">Download</a>
             <button class="close-btn" onclick="closePreview()">&times;</button>
           </div>
         </div>
@@ -1302,11 +754,14 @@
 
     <script>
       // --- KONFIGURASI ---
-      const SCRIPT_URL =
-        "https://script.google.com/macros/s/AKfycbxNbZa2EeZ4H_gGf_W37a2Jc86Az8iZGqz16BfGO7bepBfa9PV40CcDL-EG3KecN31P/exec";
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxNbZa2EeZ4H_gGf_W37a2Jc86Az8iZGqz16BfGO7bepBfa9PV40CcDL-EG3KecN31P/exec";
       let allData = [];
       let allDataKeluar = [];
       let currentUser = null;
+
+      // State untuk Sorting
+      let sortStateSM = { column: null, direction: 'none' }; 
+      let sortStateSK = { column: null, direction: 'none' };
 
       // --- CHECK SESSION ON LOAD ---
       window.onload = function () {
@@ -1315,25 +770,22 @@
 
         if (savedUser && savedTime) {
           const now = Date.now();
-          const oneHour = 60 * 60 * 1000; // 3600000 ms
+          const oneHour = 60 * 60 * 1000; 
 
           if (now - savedTime < oneHour) {
-            // SESSION MASIH VALID
             currentUser = JSON.parse(savedUser);
             document.getElementById("login-page").classList.add("hidden");
             document.getElementById("main-app").style.display = "block";
 
             setupPermissions();
-            fetchAllInitialData(); // FIX ISSUE: Ambil semua data saat load awal
+            fetchAllInitialData(); 
             showToast(`Selamat datang kembali, ${currentUser.role}`);
             fetchRoles();
             return;
           } else {
-            // SESSION HABIS
             localStorage.clear();
           }
         }
-        // ELSE: Tampilkan halaman login (default HTML)
       };
 
       // --- HELPER FUNCTIONS ---
@@ -1346,6 +798,14 @@
         const year = d.getFullYear();
         return `${day}-${month}-${year}`;
       }
+      
+      function getYearPart(dateString) {
+        if (!dateString) return "";
+        const d = new Date(dateString);
+        if (isNaN(d.getTime())) return "";
+        return d.getFullYear().toString();
+      }
+
       function getMonthPart(dateString) {
         if (!dateString) return "";
         if (dateString.includes("-")) {
@@ -1354,6 +814,7 @@
         }
         return "";
       }
+
       function showToast(message, type = "success") {
         const container = document.getElementById("toast-container");
         const toast = document.createElement("div");
@@ -1366,15 +827,14 @@
           setTimeout(() => toast.remove(), 300);
         }, 3000);
       }
+      
       // --- FETCH DYNAMIC ROLES ---
       function fetchRoles() {
         fetch(SCRIPT_URL + "?action=get_roles")
           .then((res) => res.json())
           .then((roles) => {
             const select = document.getElementById("disp_penerima");
-            select.innerHTML = '<option value="">-- Pilih Role --</option>'; // Reset option pertama
-
-            // Masukkan Role ke Dropdown
+            select.innerHTML = '<option value="">-- Pilih Role --</option>'; 
             roles.forEach((role) => {
               const option = document.createElement("option");
               option.value = role;
@@ -1382,11 +842,7 @@
               select.appendChild(option);
             });
           })
-          .catch((err) => {
-            console.error("Gagal memuat role:", err);
-            document.getElementById("disp_penerima").innerHTML =
-              '<option value="">Gagal memuat role</option>';
-          });
+          .catch((err) => console.error("Gagal memuat role:", err));
       }
 
       // --- AUTH & NAVIGATION ---
@@ -1399,21 +855,15 @@
         btn.disabled = true;
         btn.innerText = "Checking...";
 
-        // Menggunakan FormData untuk menghindari CORS
         const formData = new FormData();
         const payload = { action: "login", username: u, password: p };
         formData.append("data", JSON.stringify(payload));
 
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          body: formData,
-        })
+        fetch(SCRIPT_URL, { method: "POST", body: formData })
           .then((res) => res.json())
           .then((response) => {
             if (response.status === "success") {
               currentUser = response.data;
-
-              // SIMPAN SESI KE LOCAL STORAGE
               localStorage.setItem("userData", JSON.stringify(currentUser));
               localStorage.setItem("loginTime", Date.now());
 
@@ -1421,14 +871,11 @@
               document.getElementById("main-app").style.display = "block";
 
               setupPermissions();
-              fetchAllInitialData(); // FIX ISSUE: Ambil semua data setelah login
+              fetchAllInitialData();
               fetchRoles();
               showToast(`Login Berhasil! Hai, ${currentUser.role}`);
             } else {
-              showToast(
-                response.message || "Username atau Password salah!",
-                "error"
-              );
+              showToast(response.message || "Username atau Password salah!", "error");
             }
           })
           .catch((err) => {
@@ -1442,16 +889,14 @@
       }
 
       function logout() {
-        localStorage.clear(); // Hapus sesi
+        localStorage.clear();
         location.reload();
       }
 
       function setupPermissions() {
         if (!currentUser) return;
         document.getElementById("user-role-badge").innerText = currentUser.role;
-        document.getElementById(
-          "welcome-msg"
-        ).innerText = `Selamat Datang, ${currentUser.role}!`;
+        document.getElementById("welcome-msg").innerText = `Selamat Datang, ${currentUser.role}!`;
 
         if (currentUser.tingkat == 1) {
           document.getElementById("nav-sm").style.display = "block";
@@ -1469,12 +914,8 @@
       }
 
       function switchTab(id, el) {
-        document
-          .querySelectorAll(".page-section")
-          .forEach((p) => p.classList.remove("active"));
-        document
-          .querySelectorAll(".nav-item")
-          .forEach((n) => n.classList.remove("active"));
+        document.querySelectorAll(".page-section").forEach((p) => p.classList.remove("active"));
+        document.querySelectorAll(".nav-item").forEach((n) => n.classList.remove("active"));
         document.getElementById(id).classList.add("active");
         el.classList.add("active");
 
@@ -1486,23 +927,20 @@
           return;
         }
 
-        if (id === "surat-keluar" && allDataKeluar.length === 0)
-          fetchDataKeluar();
+        if (id === "surat-keluar" && allDataKeluar.length === 0) fetchDataKeluar();
         if (id === "disposisi") {
           if (allData.length === 0) fetchData().then(() => renderDisposisi());
           else renderDisposisi();
         }
       }
 
-      // --- FETCH ALL INITIAL DATA (FIX FOR DASHBOARD) ---
+      // --- FETCH ALL INITIAL DATA ---
       function fetchAllInitialData() {
-        // Memanggil kedua fungsi fetch sekaligus, lalu update dashboard
         Promise.all([fetchData(), fetchDataKeluar()]).then(() => {
           updateDashboard();
         });
       }
 
-      // --- REFRESH BUTTON LOGIC ---
       function refreshAllData() {
         showToast("Memperbarui data...", "info");
         fetchAllInitialData();
@@ -1511,7 +949,7 @@
       // --- DASHBOARD STATS ---
       function updateDashboard() {
         document.getElementById("count-sm").innerText = allData.length;
-        document.getElementById("count-sk").innerText = allDataKeluar.length; // Sekarang ini tidak akan 0 karena di-fetch saat awal
+        document.getElementById("count-sk").innerText = allDataKeluar.length;
 
         let pending = allData.filter((item) => item.status === "Baru").length;
         let done = allData.length - pending;
@@ -1529,6 +967,7 @@
           .then((data) => {
             allData = data;
             renderTable();
+            populateYearFilter(data, "yearFilter"); 
             if (loader) loader.classList.add("hidden");
           })
           .catch((err) => {
@@ -1544,6 +983,7 @@
           .then((data) => {
             allDataKeluar = data;
             renderTableKeluar();
+            populateYearFilter(data, "yearFilterKeluar"); 
             if (loader) loader.classList.add("hidden");
           })
           .catch((err) => {
@@ -1552,23 +992,116 @@
           });
       }
 
+      // --- POPULATE YEAR FILTER ---
+      function populateYearFilter(data, elementId) {
+        const select = document.getElementById(elementId);
+        const currentYear = new Date().getFullYear().toString();
+        let years = new Set();
+        
+        data.forEach(item => {
+           const dateStr = item.tglSurat || item.tanggal;
+           const year = getYearPart(dateStr);
+           if(year) years.add(year);
+        });
+
+        years.add(currentYear);
+        const sortedYears = Array.from(years).sort((a, b) => b - a);
+
+        let options = '<option value="all">Semua Tahun</option>';
+        sortedYears.forEach(y => {
+            const selectedVal = select.value;
+            const selected = selectedVal === y ? 'selected' : '';
+            options += `<option value="${y}" ${selected}>${y}</option>`;
+        });
+        
+        select.innerHTML = options;
+      }
+
+      // --- SORTING LOGIC ---
+      function handleSort(column, type) {
+        let state = type === 'sm' ? sortStateSM : sortStateSK;
+        
+        if (state.column !== column) {
+            state.column = column;
+            state.direction = 'asc';
+        } else {
+            if (state.direction === 'asc') state.direction = 'desc';
+            else if (state.direction === 'desc') state.direction = 'none';
+            else state.direction = 'asc';
+        }
+
+        updateSortIcons(type, column, state.direction);
+
+        if (type === 'sm') renderTable();
+        else renderTableKeluar();
+      }
+
+      function updateSortIcons(type, activeColumn, direction) {
+          const tableId = type === 'sm' ? 'data-table-sm' : 'data-table-sk';
+          const headers = document.querySelectorAll(`#${tableId} th`);
+          
+          headers.forEach(th => {
+              th.classList.remove('active-sort');
+              const span = th.querySelector('.sort-icon');
+              if(span) span.textContent = '';
+          });
+
+          if (direction !== 'none') {
+              headers.forEach(th => {
+                  if(th.getAttribute('onclick') && th.getAttribute('onclick').includes(`'${activeColumn}'`)){
+                      th.classList.add('active-sort');
+                      const span = th.querySelector('.sort-icon');
+                      if(span) span.textContent = direction === 'asc' ? '▲' : '▼';
+                  }
+              });
+          }
+      }
+
       // --- RENDERING TABLES ---
       function renderTable() {
         const tbody = document.getElementById("tbody-sm");
         const filterMonth = document.getElementById("monthFilter").value;
+        const filterYear = document.getElementById("yearFilter").value;
+        
         tbody.innerHTML = "";
-        const filteredData = allData.filter((item) => {
-          if (filterMonth === "all") return true;
-          return getMonthPart(item.tglTerima) === filterMonth;
+
+        let processedData = allData.filter((item) => {
+          const monthMatch = filterMonth === "all" || getMonthPart(item.tglTerima) === filterMonth;
+          const yearMatch = filterYear === "all" || getYearPart(item.tglTerima) === filterYear;
+          return monthMatch && yearMatch;
         });
-        if (filteredData.length === 0) {
+
+        if (sortStateSM.direction !== 'none' && sortStateSM.column) {
+            processedData.sort((a, b) => {
+                let valA = a[sortStateSM.column];
+                let valB = b[sortStateSM.column];
+
+                if (sortStateSM.column === 'tglSurat' || sortStateSM.column === 'tglTerima') {
+                    valA = new Date(valA || 0);
+                    valB = new Date(valB || 0);
+                } else {
+                    valA = (valA || '').toString().toLowerCase();
+                    valB = (valB || '').toString().toLowerCase();
+                }
+
+                if (valA < valB) return sortStateSM.direction === 'asc' ? -1 : 1;
+                if (valA > valB) return sortStateSM.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        if (processedData.length === 0) {
           tbody.innerHTML = `<tr><td colspan="8" class="text-center" style="padding:2rem; color:var(--text-muted);">Tidak ada data.</td></tr>`;
           return;
         }
-        filteredData.forEach((item) => {
+
+        processedData.forEach((item) => {
           let statusClass = "status-baru";
           if (item.status === "Proses") statusClass = "status-proses";
           if (item.status === "Selesai") statusClass = "status-selesai";
+          
+          const canDelete = currentUser.tingkat <= 2;
+
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td><strong>${item.noAgenda}</strong></td>
@@ -1577,67 +1110,12 @@
             <td>${formatDateID(item.tglTerima)}</td>
             <td>${item.pengirim}</td>
             <td>${item.perihal}</td>
-            <td><span class="status-badge ${statusClass}">${
-            item.status || "Baru"
-          }</span></td>
+            <td><span class="status-badge ${statusClass}">${item.status || "Baru"}</span></td>
             <td>
               <div class="flex gap-2">
-                <button class="btn btn-info btn-sm" onclick="openPreview('${
-                  item.fileUrl
-                }')" title="Preview">👁️</button>
-                <button class="btn btn-warning btn-sm" onclick="downloadFile('${
-                  item.fileUrl
-                }')" title="Download">⬇️</button>
-                ${
-                  currentUser.tingkat <= 1
-                    ? `<button class="btn btn-danger btn-sm" onclick="deleteData('masuk', '${item.fileId}')" title="Hapus">🗑️</button>`
-                    : ""
-                }
-              </div>
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
-      function renderTableKeluar() {
-        const tbody = document.getElementById("tbody-sk");
-        const filterMonth = document.getElementById("monthFilterKeluar").value;
-        tbody.innerHTML = "";
-        const filteredData = allDataKeluar.filter((item) => {
-          if (filterMonth === "all") return true;
-          return getMonthPart(item.tanggal) === filterMonth;
-        });
-        if (filteredData.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:2rem; color:var(--text-muted);">Tidak ada data.</td></tr>`;
-          return;
-        }
-        filteredData.forEach((item) => {
-          let statusClass = "status-baru";
-          if (item.status === "Proses") statusClass = "status-proses";
-          if (item.status === "Selesai") statusClass = "status-selesai";
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td><strong>${item.noAgenda}</strong></td>
-            <td>${item.noSurat}</td>
-            <td>${formatDateID(item.tanggal)}</td>
-            <td>${item.tujuan}</td>
-            <td>${item.perihal}</td>
-            <td><span class="status-badge ${statusClass}">${
-            item.status || "Baru"
-          }</span></td>
-            <td>
-              <div class="flex gap-2">
-                <button class="btn btn-info btn-sm" onclick="openPreview('${
-                  item.fileUrl
-                }')" title="Preview">👁️</button>
-                <button class="btn btn-warning btn-sm" onclick="downloadFile('${
-                  item.fileUrl
-                }')" title="Download">⬇️</button>
-                ${
-                  currentUser.tingkat == 1
-                    ? `<button class="btn btn-danger btn-sm" onclick="deleteData('keluar', '${item.fileId}')" title="Hapus">🗑️</button>`
-                    : ""
-                }
+                <button class="btn btn-info btn-sm" onclick="openPreview('${item.fileUrl}')" title="Preview">👁️</button>
+                <button class="btn btn-warning btn-sm" onclick="downloadFile('${item.fileUrl}')" title="Download">⬇️</button>
+                ${canDelete ? `<button class="btn btn-danger btn-sm" onclick="deleteData('masuk', '${item.fileId}')" title="Hapus">🗑️</button>` : ""}
               </div>
             </td>
           `;
@@ -1645,7 +1123,70 @@
         });
       }
 
-      // --- DISPOSISI LOGIC (UPDATED WITH NO AGENDA) ---
+      function renderTableKeluar() {
+        const tbody = document.getElementById("tbody-sk");
+        const filterMonth = document.getElementById("monthFilterKeluar").value;
+        const filterYear = document.getElementById("yearFilterKeluar").value;
+        
+        tbody.innerHTML = "";
+
+        let processedData = allDataKeluar.filter((item) => {
+            const monthMatch = filterMonth === "all" || getMonthPart(item.tanggal) === filterMonth;
+            const yearMatch = filterYear === "all" || getYearPart(item.tanggal) === filterYear;
+            return monthMatch && yearMatch;
+        });
+
+        if (sortStateSK.direction !== 'none' && sortStateSK.column) {
+            processedData.sort((a, b) => {
+                let valA = a[sortStateSK.column];
+                let valB = b[sortStateSK.column];
+
+                if (sortStateSK.column === 'tanggal') {
+                    valA = new Date(valA || 0);
+                    valB = new Date(valB || 0);
+                } else {
+                    valA = (valA || '').toString().toLowerCase();
+                    valB = (valB || '').toString().toLowerCase();
+                }
+
+                if (valA < valB) return sortStateSK.direction === 'asc' ? -1 : 1;
+                if (valA > valB) return sortStateSK.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        if (processedData.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:2rem; color:var(--text-muted);">Tidak ada data.</td></tr>`;
+          return;
+        }
+        processedData.forEach((item) => {
+          let statusClass = "status-baru";
+          if (item.status === "Proses") statusClass = "status-proses";
+          if (item.status === "Selesai") statusClass = "status-selesai";
+          
+          const canDelete = currentUser.tingkat <= 2;
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td><strong>${item.noAgenda}</strong></td>
+            <td>${item.noSurat}</td>
+            <td>${formatDateID(item.tanggal)}</td>
+            <td>${item.tujuan}</td>
+            <td>${item.perihal}</td>
+            <td><span class="status-badge ${statusClass}">${item.status || "Baru"}</span></td>
+            <td>
+              <div class="flex gap-2">
+                <button class="btn btn-info btn-sm" onclick="openPreview('${item.fileUrl}')" title="Preview">👁️</button>
+                <button class="btn btn-warning btn-sm" onclick="downloadFile('${item.fileUrl}')" title="Download">⬇️</button>
+                ${canDelete ? `<button class="btn btn-danger btn-sm" onclick="deleteData('keluar', '${item.fileId}')" title="Hapus">🗑️</button>` : ""}
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+
+      // --- DISPOSISI LOGIC ---
       function renderDisposisi() {
         const loaderNew = document.getElementById("loading-msg-dp-new");
         const loaderHist = document.getElementById("loading-msg-dp-history");
@@ -1661,33 +1202,20 @@
 
         let newLetters, disposedLetters;
 
-        // LOGIKA TINGKAT 3 (Waka dll)
         if (currentUser.tingkat == 3) {
-          // Sembunyikan tabel "Surat Baru"
-          document.getElementById("section-disposisi-new").style.display =
-            "none";
-
-          // Filter riwayat disposisi HANYA untuk role ini
+          document.getElementById("section-disposisi-new").style.display = "none";
           disposedLetters = allData.filter((item) => {
             return item.status !== "Baru" && item.penerima === currentUser.role;
           });
           newLetters = [];
         } else {
-          // TINGKAT 1 (Admin) & TINGKAT 2 (Staf)
-          document.getElementById("section-disposisi-new").style.display =
-            "block";
+          document.getElementById("section-disposisi-new").style.display = "block";
           newLetters = allData.filter((item) => item.status === "Baru");
-
-          // Untuk Riwayat:
-          // Tingkat 2 hanya melihat semuanya (opsional), atau sesuai kebutuhan.
-          // Di sini kita biarkan keduanya melihat semua riwayat yang sudah diproses.
           disposedLetters = allData.filter((item) => item.status !== "Baru");
         }
 
-        // Render Tabel Baru (Hanya T1 & T2)
         const tbodyNew = document.getElementById("tbody-disposisi-new");
         tbodyNew.innerHTML = "";
-        // UPDATE COLSPAN: Karena header sekarang ada 5 kolom
         if (newLetters.length === 0 && currentUser.tingkat != 3) {
           tbodyNew.innerHTML = `<tr><td colspan="5" class="text-center" style="padding:1rem; color:var(--text-muted);">Tidak ada surat baru.</td></tr>`;
         }
@@ -1703,15 +1231,12 @@
           `;
         });
 
-        // Render Riwayat
         const tbodyHistory = document.getElementById("tbody-disposisi-history");
         tbodyHistory.innerHTML = "";
-        // UPDATE COLSPAN: Karena header sekarang ada 7 kolom
         if (disposedLetters.length === 0) {
           tbodyHistory.innerHTML = `<tr><td colspan="7" class="text-center" style="padding:1rem; color:var(--text-muted);">Belum ada riwayat disposisi.</td></tr>`;
         }
         disposedLetters.forEach((item) => {
-          // TOMBOL KHUSUS UNTUK TINGKAT 1 (Edit & Delete)
           const adminActions =
             currentUser.tingkat == 1
               ? `
@@ -1726,18 +1251,12 @@
               <td>${item.noSurat}</td>
               <td>${item.pengirim}</td>
               <td>${item.perihal}</td>
-              <td><span class="status-badge status-baru">${
-                item.penerima || "-"
-              }</span></td>
+              <td><span class="status-badge status-baru">${item.penerima || "-"}</span></td>
               <td>${item.instruksi || "-"}</td>
               <td>
                  <div class="flex gap-2 justify-center">
-                    <button class="btn btn-info btn-sm" onclick="openPreview('${
-                      item.fileUrl
-                    }')" title="Preview">👁️</button>
-                    <button class="btn btn-warning btn-sm" onclick="downloadFile('${
-                      item.fileUrl
-                    }')" title="Download">⬇️</button>
+                    <button class="btn btn-info btn-sm" onclick="openPreview('${item.fileUrl}')" title="Preview">👁️</button>
+                    <button class="btn btn-warning btn-sm" onclick="downloadFile('${item.fileUrl}')" title="Download">⬇️</button>
                     ${adminActions}
                  </div>
               </td>
@@ -1748,8 +1267,9 @@
         loaderNew.classList.add("hidden");
         loaderHist.classList.add("hidden");
       }
+      
       // --- SUBMIT LOGIC ---
-            function handleFileUpload(formData, type, btnId, fetchSuccess) {
+      function handleFileUpload(formData, type, btnId, fetchSuccess) {
         const btn = document.getElementById(btnId);
         const fileInputId = type === "masuk" ? "sm_file" : "sk_file";
         const file = document.getElementById(fileInputId).files[0];
@@ -1771,26 +1291,18 @@
             fileBase64: reader.result,
           };
 
-          // --- PERBAIKAN: Gunakan FormData seperti saat Login ---
           const sendData = new FormData();
           sendData.append("data", JSON.stringify(payload));
 
-          fetch(SCRIPT_URL, {
-            method: "POST",
-            body: sendData,
-            // HAPUS baris headers dan mode: "no-cors" agar browser bisa membaca response error/sukses dengan benar
-          })
+          fetch(SCRIPT_URL, { method: "POST", body: sendData })
             .then((res) => res.json())
             .then((response) => {
-              // Cek response dari backend
               if (response.result === "success" || response.result === "updated") {
                  showToast("Data berhasil disimpan!");
                  document.getElementById(type === "masuk" ? "form-sm" : "form-sk").reset();
                  fetchSuccess();
               } else {
-                 // Jika ada error dari backend (misal folder id salah)
                  showToast("Gagal: " + (response.error || "Unknown error"), "error");
-                 console.error("Backend Error:", response);
               }
             })
             .catch((err) => {
@@ -1842,25 +1354,17 @@
           document.getElementById("disp_pengirim").value = item.pengirim;
           document.getElementById("disp_perihal").value = item.perihal;
           document.getElementById("disp_fileUrl").value = item.fileUrl;
-          document.getElementById("disp_viewBtn").onclick = () =>
-            openPreview(item.fileUrl);
-          document.getElementById("disp_downloadBtn").onclick = () =>
-            downloadFile(item.fileUrl);
+          document.getElementById("disp_viewBtn").onclick = () => openPreview(item.fileUrl);
+          document.getElementById("disp_downloadBtn").onclick = () => downloadFile(item.fileUrl);
 
           if (isEdit) {
-            document.getElementById("disp_penerima").value =
-              item.penerima || "";
-            document.getElementById("disp_instruksi").value =
-              item.instruksi || "";
-            document.getElementById("modalTitleDisposisi").innerText =
-              "Edit Disposisi";
-            document.getElementById("btnSubmitDisp").innerText =
-              "Update Disposisi";
+            document.getElementById("disp_penerima").value = item.penerima || "";
+            document.getElementById("disp_instruksi").value = item.instruksi || "";
+            document.getElementById("modalTitleDisposisi").innerText = "Edit Disposisi";
+            document.getElementById("btnSubmitDisp").innerText = "Update Disposisi";
           } else {
-            document.getElementById("modalTitleDisposisi").innerText =
-              "Buat Disposisi Baru";
-            document.getElementById("btnSubmitDisp").innerText =
-              "Kirim Disposisi";
+            document.getElementById("modalTitleDisposisi").innerText = "Buat Disposisi Baru";
+            document.getElementById("btnSubmitDisp").innerText = "Kirim Disposisi";
           }
         }
         modal.classList.add("show");
@@ -1906,22 +1410,13 @@
           })
           .finally(() => {
             btn.disabled = false;
-            btn.innerText = document
-              .getElementById("modalTitleDisposisi")
-              .innerText.includes("Edit")
-              ? "Update Disposisi"
-              : "Kirim Disposisi";
+            btn.innerText = document.getElementById("modalTitleDisposisi").innerText.includes("Edit") ? "Update Disposisi" : "Kirim Disposisi";
           });
       }
 
       // --- DELETE LOGIC ---
       function deleteData(type, fileId) {
-        if (
-          !confirm(
-            "Apakah Anda yakin ingin menghapus data ini secara permanen?"
-          )
-        )
-          return;
+        if (!confirm("Apakah Anda yakin ingin menghapus data ini secara permanen?")) return;
         showToast("Memproses penghapusan...", "info");
         fetch(SCRIPT_URL, {
           method: "POST",
@@ -1935,12 +1430,7 @@
               fetchDataKeluar();
             } else {
               fetchData().then(() => {
-                if (
-                  document
-                    .getElementById("disposisi")
-                    .classList.contains("active")
-                )
-                  renderDisposisi();
+                if (document.getElementById("disposisi").classList.contains("active")) renderDisposisi();
               });
             }
           })
@@ -1951,16 +1441,12 @@
       }
 
       // --- PREVIEW & DOWNLOAD ---
-      function downloadFile(url) {
-        window.open(url, "_blank");
-      }
+      function downloadFile(url) { window.open(url, "_blank"); }
       function openPreview(url) {
         const modal = document.getElementById("pdfModal");
         const iframe = document.getElementById("pdfFrame");
         const dlLink = document.getElementById("modalDownloadLink");
-        const viewerUrl =
-          "https://docs.google.com/viewer?embedded=true&url=" +
-          encodeURIComponent(url);
+        const viewerUrl = "https://docs.google.com/viewer?embedded=true&url=" + encodeURIComponent(url);
         iframe.src = viewerUrl;
         dlLink.href = url;
         modal.classList.add("show");
@@ -1972,16 +1458,68 @@
         modal.classList.remove("show");
       }
 
+      // --- EXPORT TO EXCEL WITH LINK ---
+      function exportToExcel(type) {
+        let dataToExport = [];
+        let fileName = "";
+
+        if (type === 'masuk') {
+            const filterMonth = document.getElementById("monthFilter").value;
+            const filterYear = document.getElementById("yearFilter").value;
+            
+            dataToExport = allData.filter((item) => {
+                const monthMatch = filterMonth === "all" || getMonthPart(item.tglTerima) === filterMonth;
+                const yearMatch = filterYear === "all" || getYearPart(item.tglTerima) === filterYear;
+                return monthMatch && yearMatch;
+            }).map(item => ({
+                "No Agenda": item.noAgenda,
+                "No Surat": item.noSurat,
+                "Tanggal Surat": formatDateID(item.tglSurat),
+                "Tanggal Terima": formatDateID(item.tglTerima),
+                "Pengirim": item.pengirim,
+                "Perihal": item.perihal,
+                "Status": item.status || "Baru",
+                "Link File": item.fileUrl // Tambahan kolom link
+            }));
+            fileName = `Data_Surat_Masuk_${new Date().toLocaleDateString('id-ID')}.xlsx`;
+
+        } else {
+            const filterMonth = document.getElementById("monthFilterKeluar").value;
+            const filterYear = document.getElementById("yearFilterKeluar").value;
+
+            dataToExport = allDataKeluar.filter((item) => {
+                const monthMatch = filterMonth === "all" || getMonthPart(item.tanggal) === filterMonth;
+                const yearMatch = filterYear === "all" || getYearPart(item.tanggal) === filterYear;
+                return monthMatch && yearMatch;
+            }).map(item => ({
+                "No Agenda": item.noAgenda,
+                "No Surat": item.noSurat,
+                "Tanggal": formatDateID(item.tanggal),
+                "Tujuan": item.tujuan,
+                "Perihal": item.perihal,
+                "Status": item.status || "Baru",
+                "Link File": item.fileUrl // Tambahan kolom link
+            }));
+            fileName = `Data_Surat_Keluar_${new Date().toLocaleDateString('id-ID')}.xlsx`;
+        }
+
+        if (dataToExport.length === 0) {
+            showToast("Tidak ada data untuk diunduh.", "error");
+            return;
+        }
+
+        const ws = XLSX.utils.json_to_sheet(dataToExport);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Data");
+        XLSX.writeFile(wb, fileName);
+        showToast("File Excel sedang diunduh...", "success");
+      }
+
       // --- FUNGSI LUPA PASSWORD KE WA ---
       function hubAdminWA() {
-        // GANTI NOMOR INI DENGAN NOMOR WA ADMIN ASLI (Format: 628...)
         var noAdmin = "6285234197951";
-
-        var pesan =
-          "Halo Admin MTs Negeri 1 Lamongan,\n\nSaya lupa password untuk akun di Sistem Administrasi Surat.\nMohon bantu reset passwordnya.\n\nTerima kasih.";
-
-        var urlWA =
-          "https://wa.me/" + noAdmin + "?text=" + encodeURIComponent(pesan);
+        var pesan = "Halo Admin MTs Negeri 1 Lamongan,\n\nSaya lupa password untuk akun di Sistem Administrasi Surat.\nMohon bantu reset passwordnya.\n\nTerima kasih.";
+        var urlWA = "https://wa.me/" + noAdmin + "?text=" + encodeURIComponent(pesan);
         window.open(urlWA, "_blank");
       }
     </script>
