@@ -753,8 +753,73 @@
     </div>
 
     <script>
+
+// ============================================
+// gasFetch — JSONP for GET, no-cors for POST
+// ============================================
+function gasFetch(url, options) {
+  options = options || {};
+
+  // ===== POST: mode 'no-cors' (file upload) =====
+  if (options.method === 'POST') {
+    var bodyData = '';
+    if (options.body instanceof FormData) {
+      try { options.body.forEach(function(v, k) { if (k === 'data') bodyData = v; }); } catch (e) {}
+    } else if (options.body) {
+      bodyData = typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
+    }
+
+    return fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain' },
+      body: bodyData
+    }).then(function () {
+      return {
+        ok: true,
+        status: 200,
+        json: function () { return Promise.resolve({ result: "success", message: "Terkirim" }); }
+      };
+    });
+  }
+
+  // ===== GET: JSONP via <script> tag =====
+  return new Promise(function (resolve, reject) {
+    var cbName = '_gcb' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    var script = document.createElement('script');
+
+    var timer = setTimeout(function () {
+      cleanup();
+      reject(new Error('Request timeout (30s)'));
+    }, 30000);
+
+    window[cbName] = function (data) {
+      cleanup();
+      resolve({
+        ok: true,
+        status: 200,
+        json: function () { return Promise.resolve(data); }
+      });
+    };
+
+    function cleanup() {
+      clearTimeout(timer);
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    script.onerror = function () {
+      cleanup();
+      reject(new Error('Gagal memuat data dari server'));
+    };
+
+    var sep = url.indexOf('?') !== -1 ? '&' : '?';
+    script.src = url + sep + 'callback=' + cbName;
+    document.head.appendChild(script);
+  });
+}
       // --- KONFIGURASI ---
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwwixtIw6TOkO56D6Q8JTBYRBJ1MFOrNKgMqI5z2pbypwCOgmDUTQCI7Yw2DgecrVN6/exec";
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwURnq1dRmF6IyCXtjqozaUTSVZ2AjcfeCI3CXCCtVCcw0lHI8NY3gSfwelSnws6RJU0A/exec";
       let allData = [];
       let allDataKeluar = [];
       let currentUser = null;
@@ -830,7 +895,7 @@
       
       // --- FETCH DYNAMIC ROLES ---
       function fetchRoles() {
-        fetch(SCRIPT_URL + "?action=get_roles")
+        gasFetch(SCRIPT_URL + "?action=get_roles")
           .then((res) => res.json())
           .then((roles) => {
             const select = document.getElementById("disp_penerima");
@@ -847,46 +912,40 @@
 
       // --- AUTH & NAVIGATION ---
       function login(e) {
-        e.preventDefault();
-        const btn = document.getElementById("btn-login");
-        const u = document.getElementById("username").value;
-        const p = document.getElementById("password").value;
+  e.preventDefault();
+  const btn = document.getElementById("btn-login");
+  const u = document.getElementById("username").value;
+  const p = document.getElementById("password").value;
 
-        btn.disabled = true;
-        btn.innerText = "Checking...";
+  btn.disabled = true;
+  btn.innerText = "Checking...";
 
-        const formData = new FormData();
-        const payload = { action: "login", username: u, password: p };
-        formData.append("data", JSON.stringify(payload));
-
-        fetch(SCRIPT_URL, { method: "POST", body: formData })
-          .then((res) => res.json())
-          .then((response) => {
-            if (response.status === "success") {
-              currentUser = response.data;
-              localStorage.setItem("userData", JSON.stringify(currentUser));
-              localStorage.setItem("loginTime", Date.now());
-
-              document.getElementById("login-page").classList.add("hidden");
-              document.getElementById("main-app").style.display = "block";
-
-              setupPermissions();
-              fetchAllInitialData();
-              fetchRoles();
-              showToast(`Login Berhasil! Hai, ${currentUser.role}`);
-            } else {
-              showToast(response.message || "Username atau Password salah!", "error");
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            showToast("Gagal koneksi ke server.", "error");
-          })
-          .finally(() => {
-            btn.disabled = false;
-            btn.innerText = "Masuk Sistem";
-          });
+  gasFetch(SCRIPT_URL + "?action=login&username=" + encodeURIComponent(u) + "&password=" + encodeURIComponent(p))
+    .then((res) => res.json())
+    .then((response) => {
+      if (response.status === "success") {
+        currentUser = response.data;
+        localStorage.setItem("userData", JSON.stringify(currentUser));
+        localStorage.setItem("loginTime", Date.now());
+        document.getElementById("login-page").classList.add("hidden");
+        document.getElementById("main-app").style.display = "block";
+        setupPermissions();
+        fetchAllInitialData();
+        fetchRoles();
+        showToast(`Login Berhasil! Hai, ${currentUser.role}`);
+      } else {
+        showToast(response.message || "Username atau Password salah!", "error");
       }
+    })
+    .catch((err) => {
+      console.error(err);
+      showToast("Gagal koneksi ke server.", "error");
+    })
+    .finally(() => {
+      btn.disabled = false;
+      btn.innerText = "Masuk Sistem";
+    });
+}
 
       function logout() {
         localStorage.clear();
@@ -962,7 +1021,7 @@
       function fetchData() {
         const loader = document.getElementById("loading-msg-sm");
         if (loader) loader.classList.remove("hidden");
-        return fetch(SCRIPT_URL)
+        return gasFetch(SCRIPT_URL)
           .then((res) => res.json())
           .then((data) => {
             allData = data;
@@ -978,7 +1037,7 @@
       function fetchDataKeluar() {
         const loader = document.getElementById("loading-msg-sk");
         if (loader) loader.classList.remove("hidden");
-        return fetch(SCRIPT_URL + "?type=keluar")
+        return gasFetch(SCRIPT_URL + "?type=keluar")
           .then((res) => res.json())
           .then((data) => {
             allDataKeluar = data;
@@ -1270,51 +1329,31 @@
       
       // --- SUBMIT LOGIC ---
       function handleFileUpload(formData, type, btnId, fetchSuccess) {
-        const btn = document.getElementById(btnId);
-        const fileInputId = type === "masuk" ? "sm_file" : "sk_file";
-        const file = document.getElementById(fileInputId).files[0];
-        if (!file) {
-          showToast("Wajib memilih file PDF!", "error");
-          return;
-        }
-        
-        btn.disabled = true;
-        btn.innerHTML = `<span class="spinner" style="width:14px; height:14px; display:inline-block; border-width:2px; margin-right:8px; border-color:rgba(255,255,255,0.3); border-top-color:#fff;"></span> Uploading...`;
-        
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function () {
-          const payload = {
-            ...formData,
-            fileName: file.name,
-            mimeType: file.type,
-            fileBase64: reader.result,
-          };
+  const btn = document.getElementById(btnId);
+  const file = document.getElementById(type === "masuk" ? "sm_file" : "sk_file").files[0];
+  if (!file) { showToast("Wajib memilih file PDF!", "error"); return; }
 
-          const sendData = new FormData();
-          sendData.append("data", JSON.stringify(payload));
+  btn.disabled = true;
+  btn.innerHTML = `<span class="spinner" style="width:14px;height:14px;display:inline-block;border-width:2px;margin-right:8px;border-color:rgba(255,255,255,0.3);border-top-color:#fff;"></span> Uploading...`;
 
-          fetch(SCRIPT_URL, { method: "POST", body: sendData })
-            .then((res) => res.json())
-            .then((response) => {
-              if (response.result === "success" || response.result === "updated") {
-                 showToast("Data berhasil disimpan!");
-                 document.getElementById(type === "masuk" ? "form-sm" : "form-sk").reset();
-                 fetchSuccess();
-              } else {
-                 showToast("Gagal: " + (response.error || "Unknown error"), "error");
-              }
-            })
-            .catch((err) => {
-              console.error(err);
-              showToast("Gagal menyimpan data (Koneksi/Server Error).", "error");
-            })
-            .finally(() => {
-              btn.disabled = false;
-              btn.innerText = "Simpan Data";
-            });
-        };
-      }
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = function () {
+    const payload = { ...formData, fileName: file.name, mimeType: file.type, fileBase64: reader.result };
+    const sendData = new FormData();
+    sendData.append("data", JSON.stringify(payload));
+
+    gasFetch(SCRIPT_URL, { method: "POST", body: sendData })
+      .then((res) => res.json())
+      .then((response) => {
+        showToast("Data berhasil disimpan!");
+        document.getElementById(type === "masuk" ? "form-sm" : "form-sk").reset();
+        fetchSuccess();
+      })
+      .catch((err) => { console.error(err); showToast("Gagal menyimpan.", "error"); })
+      .finally(() => { btn.disabled = false; btn.innerText = "Simpan Data"; });
+  };
+}
       function submitSuratMasuk(e) {
         e.preventDefault();
         const payload = {
@@ -1373,72 +1412,53 @@
         document.getElementById("disposisiModal").classList.remove("show");
       }
       function submitDisposisi(e) {
-        e.preventDefault();
-        const btn = document.getElementById("btnSubmitDisp");
-        if (!document.getElementById("disp_dicedk").checked) {
-          showToast("Wajib centang 'Telah Dicek Pimpinan'!", "error");
-          return;
-        }
-        btn.disabled = true;
-        btn.innerText = "Menyimpan...";
-        const payload = {
-          action: "update_disposisi",
-          fileId: document.getElementById("disp_fileId").value,
-          penerima: document.getElementById("disp_penerima").value,
-          instruksi: document.getElementById("disp_instruksi").value,
-        };
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        })
-          .then(() => {
-            showToast("Disposisi berhasil disimpan!");
-            closeDisposisiModal();
-            return fetch(SCRIPT_URL);
-          })
-          .then((res) => res.json())
-          .then((data) => {
-            allData = data;
-            renderDisposisi();
-            updateDashboard();
-          })
-          .catch((err) => {
-            console.error(err);
-            showToast("Gagal menyimpan disposisi.", "error");
-          })
-          .finally(() => {
-            btn.disabled = false;
-            btn.innerText = document.getElementById("modalTitleDisposisi").innerText.includes("Edit") ? "Update Disposisi" : "Kirim Disposisi";
-          });
+  e.preventDefault();
+  const btn = document.getElementById("btnSubmitDisp");
+  if (!document.getElementById("disp_dicedk").checked) { showToast("Wajib centang!", "error"); return; }
+  btn.disabled = true;
+  btn.innerText = "Menyimpan...";
+
+  const params = "?action=update_disposisi"
+    + "&fileId=" + encodeURIComponent(document.getElementById("disp_fileId").value)
+    + "&penerima=" + encodeURIComponent(document.getElementById("disp_penerima").value)
+    + "&instruksi=" + encodeURIComponent(document.getElementById("disp_instruksi").value);
+
+  gasFetch(SCRIPT_URL + params)
+    .then((res) => res.json())
+    .then((response) => {
+      if (response.result === "updated") {
+        showToast("Disposisi berhasil!");
+        closeDisposisiModal();
+        fetchData().then(() => { renderDisposisi(); updateDashboard(); });
+      } else {
+        showToast("Gagal: " + (response.message || "Error"), "error");
       }
+    })
+    .catch((err) => { console.error(err); showToast("Gagal.", "error"); })
+    .finally(() => {
+      btn.disabled = false;
+      btn.innerText = document.getElementById("modalTitleDisposisi").innerText.includes("Edit") ? "Update Disposisi" : "Kirim Disposisi";
+    });
+}
 
       // --- DELETE LOGIC ---
       function deleteData(type, fileId) {
-        if (!confirm("Apakah Anda yakin ingin menghapus data ini secara permanen?")) return;
-        showToast("Memproses penghapusan...", "info");
-        fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "delete", fileId: fileId }),
-        })
-          .then(() => {
-            showToast("Data berhasil dihapus!");
-            if (type === "keluar") {
-              fetchDataKeluar();
-            } else {
-              fetchData().then(() => {
-                if (document.getElementById("disposisi").classList.contains("active")) renderDisposisi();
-              });
-            }
-          })
-          .catch((err) => {
-            console.error(err);
-            showToast("Gagal menghapus data.", "error");
-          });
+  if (!confirm("Apakah Anda yakin ingin menghapus data ini?")) return;
+  showToast("Menghapus...", "info");
+
+  gasFetch(SCRIPT_URL + "?action=delete&fileId=" + encodeURIComponent(fileId))
+    .then((res) => res.json())
+    .then((response) => {
+      if (response.result === "deleted") {
+        showToast("Data berhasil dihapus!");
+        if (type === "keluar") fetchDataKeluar();
+        else fetchData().then(() => { if (document.getElementById("disposisi").classList.contains("active")) renderDisposisi(); });
+      } else {
+        showToast("Gagal menghapus.", "error");
       }
+    })
+    .catch((err) => { console.error(err); showToast("Gagal menghapus.", "error"); });
+}
 
       // --- PREVIEW & DOWNLOAD ---
       function downloadFile(url) { window.open(url, "_blank"); }
