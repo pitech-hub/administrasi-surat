@@ -754,72 +754,76 @@
 
     <script>
 
-// ============================================
-// gasFetch — JSONP for GET, no-cors for POST
-// ============================================
 function gasFetch(url, options) {
   options = options || {};
 
-  // ===== POST: mode 'no-cors' (file upload) =====
   if (options.method === 'POST') {
     var bodyData = '';
     if (options.body instanceof FormData) {
-      try { options.body.forEach(function(v, k) { if (k === 'data') bodyData = v; }); } catch (e) {}
+      try { options.body.forEach(function (v, k) { if (k === 'data') bodyData = v; }); } catch (e) {}
     } else if (options.body) {
       bodyData = typeof options.body === 'string' ? options.body : JSON.stringify(options.body);
     }
-
     return fetch(url, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
       body: bodyData
-    }).then(function () {
-      return {
-        ok: true,
-        status: 200,
-        json: function () { return Promise.resolve({ result: "success", message: "Terkirim" }); }
-      };
-    });
+    })
+      .then(function () {
+        return { ok: true, status: 200, json: function () { return verifySaved(); } };
+      })
+      .catch(function (err) {
+        return {
+          ok: false, status: 500,
+          json: function () { return Promise.resolve({ result: 'error', message: 'Gagal kirim: ' + err.message }); }
+        };
+      });
   }
 
-  // ===== GET: JSONP via <script> tag =====
   return new Promise(function (resolve, reject) {
     var cbName = '_gcb' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
     var script = document.createElement('script');
-
-    var timer = setTimeout(function () {
-      cleanup();
-      reject(new Error('Request timeout (30s)'));
-    }, 30000);
-
+    var timer = setTimeout(function () { cleanup(); reject(new Error('Request timeout (30s)')); }, 30000);
     window[cbName] = function (data) {
       cleanup();
-      resolve({
-        ok: true,
-        status: 200,
-        json: function () { return Promise.resolve(data); }
-      });
+      resolve({ ok: true, status: 200, json: function () { return Promise.resolve(data); } });
     };
-
     function cleanup() {
       clearTimeout(timer);
       delete window[cbName];
       if (script.parentNode) script.parentNode.removeChild(script);
     }
-
-    script.onerror = function () {
-      cleanup();
-      reject(new Error('Gagal memuat data dari server'));
-    };
-
+    script.onerror = function () { cleanup(); reject(new Error('Gagal memuat data dari server')); };
     var sep = url.indexOf('?') !== -1 ? '&' : '?';
     script.src = url + sep + 'callback=' + cbName;
     document.head.appendChild(script);
   });
 }
+
+function verifySaved() {
+  return new Promise(function (resolve) {
+    var before = allData.length + allDataKeluar.length;
+    var tries = 0;
+    (function poll() {
+      setTimeout(function () {
+        Promise.all([fetchData(), fetchDataKeluar()]).then(function () {
+          updateDashboard();
+          if (allData.length + allDataKeluar.length > before) {
+            resolve({ result: 'success', message: 'Data berhasil disimpan' });
+          } else if (++tries < 4) {
+            poll();
+          } else {
+            resolve({ result: 'error', message: 'Terikirim tapi tidak terdeteksi. Cek Executions log GAS.' });
+          }
+        }).catch(function () { if (++tries < 4) poll(); else resolve({ result: 'success' }); });
+      }, 2500);
+    })();
+  });
+}
+
       // --- KONFIGURASI ---
-      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRtb2qquw9nr_8HNBZ47qXC3XNXIXZwyWsqaOtZ10yJisdj0BVC1jM5I8Cg8buHdDu/exec";
+      const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrlSX-5A6V16cOix2CMjwtbSI84KrJgdNnhBVGLlneztj_zeAAKvmfBJNSrHDahbTs/exec";
       let allData = [];
       let allDataKeluar = [];
       let currentUser = null;
@@ -1327,58 +1331,74 @@ function gasFetch(url, options) {
         loaderHist.classList.add("hidden");
       }
       
-      // --- SUBMIT LOGIC ---
-      function handleFileUpload(formData, type, btnId, fetchSuccess) {
-  const btn = document.getElementById(btnId);
-  const file = document.getElementById(type === "masuk" ? "sm_file" : "sk_file").files[0];
-  if (!file) { showToast("Wajib memilih file PDF!", "error"); return; }
+      function val(id) { return (document.getElementById(id).value || '').trim(); }
+function resetBtn(btn) { btn.disabled = false; btn.innerText = 'Simpan Data'; }
 
-  btn.disabled = true;
-  btn.innerHTML = `<span class="spinner" style="width:14px;height:14px;display:inline-block;border-width:2px;margin-right:8px;border-color:rgba(255,255,255,0.3);border-top-color:#fff;"></span> Uploading...`;
-
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  reader.onload = function () {
-    const payload = { ...formData, fileName: file.name, mimeType: file.type, fileBase64: reader.result };
-    const sendData = new FormData();
-    sendData.append("data", JSON.stringify(payload));
-
-    gasFetch(SCRIPT_URL, { method: "POST", body: sendData })
-      .then((res) => res.json())
-      .then((response) => {
-        showToast("Data berhasil disimpan!");
-        document.getElementById(type === "masuk" ? "form-sm" : "form-sk").reset();
-        fetchSuccess();
-      })
-      .catch((err) => { console.error(err); showToast("Gagal menyimpan.", "error"); })
-      .finally(() => { btn.disabled = false; btn.innerText = "Simpan Data"; });
+function handleFileUpload(inputFile, cb) {
+  var file = inputFile.files && inputFile.files[0];
+  if (!file) { cb(null); return; }
+  var reader = new FileReader();
+  reader.onload = function (e) {
+    cb({ fileBase64: e.target.result, mimeType: file.type || 'application/pdf', fileName: file.name });
   };
+  reader.onerror = function () { cb(null); };
+  reader.readAsDataURL(file);
 }
-      function submitSuratMasuk(e) {
-        e.preventDefault();
-        const payload = {
-          action: "create",
-          noAgenda: document.getElementById("sm_agenda").value,
-          noSurat: document.getElementById("sm_surat").value,
-          tglSurat: document.getElementById("sm_tgl_surat").value,
-          tglTerima: document.getElementById("sm_tgl_terima").value,
-          pengirim: document.getElementById("sm_pengirim").value,
-          perihal: document.getElementById("sm_perihal").value,
-        };
-        handleFileUpload(payload, "masuk", "btn-save-sm", fetchData);
-      }
-      function submitSuratKeluar(e) {
-        e.preventDefault();
-        const payload = {
-          action: "create_keluar",
-          noAgenda: document.getElementById("sk_agenda").value,
-          noSurat: document.getElementById("sk_surat").value,
-          tanggal: document.getElementById("sk_tanggal").value,
-          tujuan: document.getElementById("sk_tujuan").value,
-          perihal: document.getElementById("sk_perihal").value,
-        };
-        handleFileUpload(payload, "keluar", "btn-save-sk", fetchDataKeluar);
-      }
+
+function submitSuratMasuk(e) {
+  e.preventDefault();
+  var btn = document.getElementById('btn-save-sm');
+  btn.disabled = true; btn.innerText = '⏳ Mengunggah...';
+  handleFileUpload(document.getElementById('sm_file'), function (f) {
+    if (!f) { showToast('Gagal membaca file PDF', 'error'); resetBtn(btn); return; }
+    gasFetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'create',
+        noAgenda: val('sm_agenda'), noSurat: val('sm_surat'),
+        tglSurat: val('sm_tgl_surat'), tglTerima: val('sm_tgl_terima'),
+        pengirim: val('sm_pengirim'), perihal: val('sm_perihal'),
+        fileBase64: f.fileBase64, mimeType: f.mimeType, fileName: f.fileName
+      })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.result === 'success') {
+          showToast('Surat masuk berhasil disimpan!');
+          document.getElementById('form-sm').reset();
+          fetchData();
+        } else showToast(res.message || 'Gagal menyimpan', 'error');
+      })
+      .finally(function () { resetBtn(btn); });
+  });
+}
+
+function submitSuratKeluar(e) {
+  e.preventDefault();
+  var btn = document.getElementById('btn-save-sk');
+  btn.disabled = true; btn.innerText = '⏳ Mengunggah...';
+  handleFileUpload(document.getElementById('sk_file'), function (f) {
+    if (!f) { showToast('Gagal membaca file PDF', 'error'); resetBtn(btn); return; }
+    gasFetch(SCRIPT_URL, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'create_keluar',
+        noAgenda: val('sk_agenda'), noSurat: val('sk_surat'),
+        tanggal: val('sk_tanggal'), tujuan: val('sk_tujuan'), perihal: val('sk_perihal'),
+        fileBase64: f.fileBase64, mimeType: f.mimeType, fileName: f.fileName
+      })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (res) {
+        if (res.result === 'success') {
+          showToast('Surat keluar berhasil disimpan!');
+          document.getElementById('form-sk').reset();
+          fetchDataKeluar();
+        } else showToast(res.message || 'Gagal menyimpan', 'error');
+      })
+      .finally(function () { resetBtn(btn); });
+  });
+}
 
       // --- DISPOSISI FORM ---
       function openDisposisiModal(fileId, isEdit = false) {
